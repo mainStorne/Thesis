@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package quota;
+
+
+
+service QuotaService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+
+
+message CreateUserRequest {
+    string user_id = 1;
+}
+
+
+message CreateUserResponse {
+    string quota_limit = 1;
+
+}

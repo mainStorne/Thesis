@@ -1,0 +1,11 @@
+services:
+
+
+  tests:
+
+    build:
+      context: .
+      dockerfile: tests.Dockerfile
+
+    env_file:
+      - .env

@@ -1,0 +1,48 @@
+
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+
+    volumes:
+      - ".:/workspace:cached"
+    command: ["sleep", "infinity"]
+
+    environment:
+      - POSTGRES_HOST=db
+
+    env_file:
+      - .env
+
+    cap_add:
+      - CAP_SYS_ADMIN
+
+    privileged: true
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "8002:80"
+    volumes:
+      - pgadmin_volume:/var/lib/pgadmin
+
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@example.com
+      - PGADMIN_DEFAULT_PASSWORD=12345
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+
+  db:
+    image: postgres:latest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports: ["5432:5432"]
+    env_file:
+      - .env
+
+
+volumes:
+  pgdata:
+  pgadmin_volume:
