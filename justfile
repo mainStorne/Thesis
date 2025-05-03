@@ -1,2 +1,2 @@
 gen_grpc:
-    python -m grpc_tools.protoc -I protos/ --python_out=thesis/generated --pyi_out=thesis/generated --grpc_python_out=thesis/generated protos/quota.proto
+    python -m grpc_tools.protoc -I protos/ --python_out=thesis/schemas --pyi_out=thesis/schemas --grpc_python_out=thesis/schemas protos/quota.proto

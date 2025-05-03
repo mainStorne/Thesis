@@ -2,6 +2,7 @@ from uuid import uuid4
 
 import grpc
 import structlog
+from grpc.aio import AbortError
 from grpc_interceptor import AsyncServerInterceptor
 from structlog import get_logger
 from structlog.stdlib import BoundLogger
@@ -16,6 +17,9 @@ class LoggingInterceptor(AsyncServerInterceptor):
         await log.ainfo("Request")
         try:
             response = await method(request_or_iterator, context)
+        except AbortError as e:
+            await log.awarning("AbortError", exc_info=e)
+            raise
         except Exception as e:
             await log.aexception("Exception in request handler", exc_info=e)
             await context.abort(grpc.StatusCode.INTERNAL, "Unknown exception")

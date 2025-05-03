@@ -23,7 +23,9 @@ class QuotaService:
 
     async def create_user(self, user: User):
         proc = await create_subprocess_shell(
-            "sudo useradd -m testuser3 || true", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            f"sudo useradd -mU -b /test/filesystem/home/ -G students -c student_{user.name} {user.name}",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await proc.communicate()
 
@@ -33,3 +35,11 @@ class QuotaService:
         if stderr:
             await log.aerror(stderr.decode())
             raise CreateUserException
+
+        # TODO: change hardcoded container name to something else
+        proc = await create_subprocess_shell(
+            f"sudo docker exec -it some-mysql psql -U postgres -c 'CREATE USER {user.name}'",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await proc.communicate()

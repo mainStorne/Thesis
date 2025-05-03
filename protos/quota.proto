@@ -6,16 +6,47 @@ package quota;
 
 service QuotaService {
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
+    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
 }
+
 
 
 
 message CreateUserRequest {
-    string user_id = 1;
+    string first_name = 1;
+    optional string middle_name = 1;
+    string last_name = 1;
+
 }
 
 
+message CreateContainerRequest {
+    string image = 1;
+
+}
+message CreateContainerResponse {
+    string container_id = 1;
+}
+
+
+message StartContainerRequest {
+    string container_id = 1;
+}
+
+message StartContainerResponse {
+
+}
+
+
+message UploadAppRequest {
+
+}
+
+
+
 message CreateUserResponse {
-    string quota_limit = 1;
+    string user_id = 1;
+    string quota_limit = 2;
 
 }

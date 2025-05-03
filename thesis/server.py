@@ -1,7 +1,7 @@
 import grpc
 
-from .generated.quota_pb2_grpc import QuotaServiceServicer, add_QuotaServiceServicer_to_server
 from .interceptors.logging_interceptor import LoggingInterceptor
+from .schemas.generated.quota_pb2_grpc import QuotaServiceServicer, add_QuotaServiceServicer_to_server
 
 
 class Server:

@@ -6,7 +6,9 @@ services:
       dockerfile: dev.Dockerfile
 
     volumes:
+      - /home/bevzd/test:/test
       - ".:/workspace:cached"
+      - etc_volume:/etc
     command: ["sleep", "infinity"]
 
     environment:
@@ -21,12 +23,15 @@ services:
     privileged: true
 
 
+
   pgadmin:
     image: dpage/pgadmin4
     ports:
       - "8002:80"
     volumes:
       - pgadmin_volume:/var/lib/pgadmin
+
+    network_mode: host
 
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
@@ -46,3 +51,4 @@ services:
 volumes:
   pgdata:
   pgadmin_volume:
+  etc_volume:

@@ -1,11 +1,13 @@
+from uuid import UUID
+
 import grpc
 from dependency_injector.wiring import Provide, inject
 
 from ..database import scoped
-from ..generated.quota_pb2 import CreateUserRequest, CreateUserResponse
-from ..generated.quota_pb2_grpc import QuotaServiceServicer
+from ..schemas.generated.quota_pb2 import CreateUserRequest, CreateUserResponse
+from ..schemas.generated.quota_pb2_grpc import QuotaServiceServicer
 from .quota_container import QuotaContainer
-from .quota_repository import QuotaRepository, UserIDValidationError, UserNotFoundException
+from .quota_repository import QuotaRepository, UserNotFoundException
 from .quota_service import CreateUserException
 
 
@@ -18,11 +20,13 @@ class QuotaServicer(QuotaServiceServicer):
         context: grpc.aio.ServicerContext,
         quota_repository: QuotaRepository = Provide[QuotaContainer.quota_repository],
     ):
+        try:
+            user_id = UUID(request.user_id)
+        except ValueError:
+            return await context.abort(grpc.StatusCode.INTERNAL, "Argument user_id is wrong")
         quota_limit = "200MB"
         try:
-            await quota_repository.create_user(request.user_id)
-        except UserIDValidationError as e:
-            return await context.abort(grpc.StatusCode.INTERNAL, repr(e))
+            await quota_repository.create_user(user_id)
         except UserNotFoundException:
             return await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
         except CreateUserException:

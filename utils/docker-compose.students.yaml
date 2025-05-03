@@ -1,0 +1,12 @@
+services:
+  mysql:
+    container_name: mysql
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'dima'
+    volumes:
+      - /test/filesystem/students/db:/var/lib/mysql
+
+    ports:
+      - "8080:3306"
