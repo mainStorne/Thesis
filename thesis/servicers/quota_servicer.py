@@ -1,35 +1,46 @@
-from uuid import UUID
-
 import grpc
-from dependency_injector.wiring import Provide, inject
 
-from ..database import scoped
-from ..schemas.generated.quota_pb2 import CreateUserRequest, CreateUserResponse
-from ..schemas.generated.quota_pb2_grpc import QuotaServiceServicer
-from .quota_container import QuotaContainer
-from .quota_repository import QuotaRepository, UserNotFoundException
-from .quota_service import CreateUserException
+from thesis.injections.quota_injection import quota_inject
+from thesis.repositories.quota_repository import QuotaRepository, UserNotFoundException
+from thesis.schemas.generated.quota_pb2 import AccountRequest, CreateUserRequest, CreateUserResponse, LoginUserResponse
+from thesis.schemas.generated.quota_pb2_grpc import QuotaServiceServicer
+from thesis.services.quota_service import CreateUserException
 
 
 class QuotaServicer(QuotaServiceServicer):
-    @inject
-    @scoped
+    @quota_inject
+    async def LoginUser(
+        self,
+        request: AccountRequest,
+        context: grpc.aio.ServicerContext,
+        quota_repository: QuotaRepository,
+    ):
+        try:
+            token = await quota_repository.login_user(request.login, request.password)
+        except UserNotFoundException:
+            return await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
+        return LoginUserResponse(token=token)
+
+    # TODO create wrapped and propagate quota_repository
+    @quota_inject
     async def CreateUser(
         self,
         request: CreateUserRequest,
         context: grpc.aio.ServicerContext,
-        quota_repository: QuotaRepository = Provide[QuotaContainer.quota_repository],
+        quota_repository: QuotaRepository,
     ):
+        field = request.WhichOneof("user_profile")
+        if field is None:
+            pass
+        user: CreateUserRequest.Student = getattr(request, field)
+        if user.resource_limit[-2:] not in ["K", "M", "G"]:
+            pass
+        if not user.resource_limit[:-2].isdigit():
+            pass
+
         try:
-            user_id = UUID(request.user_id)
-        except ValueError:
-            return await context.abort(grpc.StatusCode.INTERNAL, "Argument user_id is wrong")
-        quota_limit = "200MB"
-        try:
-            await quota_repository.create_user(user_id)
-        except UserNotFoundException:
-            return await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
+            user = await quota_repository.create_user(user)
         except CreateUserException:
             return await context.abort(grpc.StatusCode.INTERNAL, "User creation failed")
 
-        return CreateUserResponse(quota_limit=quota_limit)
+        return CreateUserResponse(user_id=str(user.id))

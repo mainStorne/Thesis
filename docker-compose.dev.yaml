@@ -9,7 +9,6 @@ services:
       - /home/bevzd/test:/test
       - ".:/workspace:cached"
       - etc_volume:/etc
-    command: ["sleep", "infinity"]
 
     environment:
       - POSTGRES_HOST=db
@@ -21,23 +20,8 @@ services:
       - CAP_SYS_ADMIN
 
     privileged: true
+    command: ["sleep", "infinity"]
 
-
-
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - "8002:80"
-    volumes:
-      - pgadmin_volume:/var/lib/pgadmin
-
-    network_mode: host
-
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@example.com
-      - PGADMIN_DEFAULT_PASSWORD=12345
-      - PGADMIN_CONFIG_SERVER_MODE=False
-      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
 
   db:
     image: postgres:latest
@@ -50,5 +34,4 @@ services:
 
 volumes:
   pgdata:
-  pgadmin_volume:
   etc_volume:

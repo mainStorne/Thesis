@@ -12,7 +12,8 @@
     "forwardPorts": [
         50051,
         5432,
-        8002
+        8002,
+        8080
     ],
     // Configure tool-specific properties.
     "customizations": {
