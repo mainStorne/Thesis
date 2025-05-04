@@ -12,7 +12,7 @@ service Authorization {
 }
 
 service QuotaService {
-    rpc UploadUserApp(UploadUserAppRequest) returns (UploadUserAppResponse);
+    rpc UploadUserApp(stream UploadUserAppRequest) returns (UploadUserAppResponse);
     rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
 }
 
@@ -67,6 +67,7 @@ message StartContainerResponse {
   * загрузка архива пользователем приложения php, на стороне сервера происходит распаковка приложения создание под него docker file
   */
 message UploadUserAppRequest {
+    bytes chunk = 1;
 }
 
 message UploadUserAppResponse {

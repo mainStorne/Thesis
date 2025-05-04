@@ -1,38 +1,20 @@
-from functools import wraps
-from typing import Union
+from contextlib import AsyncExitStack
+from typing import AsyncContextManager  # noqa: UP035
 
 
-class Inject:
-    def __init__(self, sub_injection: Union["Inject", None] = None):
-        self._sub_injection = sub_injection
-        if self._sub_injection:
-            self._wrap = self._sub_injection__call__
-        else:
-            self._wrap = self._origin__call__
+def scoped(async_managers: list[AsyncContextManager]):
+    def wrapped(func):
+        # args saves (self, request, context)
+        async def wrapper(*args, **kwargs):
+            state = kwargs
+            state["context"] = args[2]
+            state["request"] = args[1]
+            async with AsyncExitStack() as stack:
+                for manager in async_managers:
+                    value = await stack.enter_async_context(manager(state))
+                    state[manager.__name__] = value
+                return await func(args[0], **state)
 
-    def _origin__call__(self, func):
-        @wraps(func)
-        async def wrapped(*args, **kwargs):
-            return await self.__inject__(func, *args, **kwargs)
+        return wrapper
 
-        return wrapped
-
-    def __call__(self, func):
-        return self._wrap(func)
-
-    def _set_state(self, dict_: dict):
-        pass
-
-    def _sub_injection__call__(self, func):
-        @self._sub_injection
-        @wraps(func)
-        async def wrapped(*args, **kwargs):
-            return await self.__inject__(func, *args, **kwargs)
-
-        return wrapped
-
-    def _get_injections(self):
-        pass
-
-    async def __inject__(self, func, *args, **kwargs):
-        return await func(*args, **kwargs)
+    return wrapped

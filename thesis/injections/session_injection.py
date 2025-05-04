@@ -1,11 +1,4 @@
-from thesis.injections.base import Inject
+from thesis.injections.base import scoped
 from thesis.integrations import database
 
-
-class SessionInject(Inject):
-    async def __inject__(self, func, *args, **kwargs):
-        async with database.get_session() as session:
-            return await super().__inject__(func, *args, **kwargs, session=session)
-
-
-session_inject = SessionInject()
+session_scoped = scoped([database.get_session])

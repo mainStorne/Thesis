@@ -7,7 +7,7 @@ from pydantic import BaseModel, ValidationError
 from thesis.db.users import Account
 
 
-class SecurityException:
+class SecurityException(Exception):
     pass
 
 
@@ -46,10 +46,36 @@ class JwtSecurityService(ISecurityService):
     def decode(self, token: str):
         try:
             return Payload(**jwt.decode(token, self._jwt_secret, algorithms=[self._algorithm]))
-        except jwt.exceptions.PyJWTError:
-            raise DecodeException  # noqa: B904
-        except ValidationError:
-            raise DecodeException  # noqa: B904
+        except jwt.exceptions.PyJWTError as e:
+            raise DecodeException from e
+        except ValidationError as e:
+            raise DecodeException from e
 
     def generate_token(self, account: Account):
         return self.encode({"id": str(account.id)})
+
+
+security = JwtSecurityService("secret", "HS256")
+
+
+class TokenIsMissing(Exception):
+    pass
+
+
+class TokenValidator:
+    def __init__(self, header_name: str):
+        self._header_name = header_name
+
+    def validate(self, dict_: dict) -> str:
+        try:
+            token: str = dict_[self._header_name]
+            schema, _, value = token.partition(" ")
+            if not value or schema.lower() != "bearer":
+                raise TokenIsMissing
+        except KeyError:
+            raise TokenIsMissing  # noqa: B904
+        else:
+            return value
+
+
+token_validator = TokenValidator("authorization")

@@ -22,6 +22,6 @@ class Database:
         self._session_maker = async_sessionmaker(self._engine, expire_on_commit=False, class_=AsyncSession)
 
     @asynccontextmanager
-    async def get_session(self) -> AsyncSession:  # type: ignore  # noqa: PGH003
+    async def get_session(self, *args, **kwargs) -> AsyncSession:  # type: ignore  # noqa: PGH003
         async with self._session_maker() as session:
             yield session

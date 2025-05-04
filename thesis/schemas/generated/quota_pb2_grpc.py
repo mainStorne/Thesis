@@ -150,7 +150,7 @@ class QuotaServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.UploadUserApp = channel.unary_unary(
+        self.UploadUserApp = channel.stream_unary(
                 '/quota.QuotaService/UploadUserApp',
                 request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
                 response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
@@ -165,7 +165,7 @@ class QuotaServiceStub(object):
 class QuotaServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def UploadUserApp(self, request, context):
+    def UploadUserApp(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -180,7 +180,7 @@ class QuotaServiceServicer(object):
 
 def add_QuotaServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'UploadUserApp': grpc.unary_unary_rpc_method_handler(
+            'UploadUserApp': grpc.stream_unary_rpc_method_handler(
                     servicer.UploadUserApp,
                     request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
                     response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
@@ -202,7 +202,7 @@ class QuotaService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def UploadUserApp(request,
+    def UploadUserApp(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -212,8 +212,8 @@ class QuotaService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
+        return grpc.experimental.stream_unary(
+            request_iterator,
             target,
             '/quota.QuotaService/UploadUserApp',
             quota__pb2.UploadUserAppRequest.SerializeToString,

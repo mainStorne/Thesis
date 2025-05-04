@@ -62,8 +62,10 @@ class StartContainerResponse(_message.Message):
     def __init__(self) -> None: ...
 
 class UploadUserAppRequest(_message.Message):
-    __slots__ = ()
-    def __init__(self) -> None: ...
+    __slots__ = ("chunk",)
+    CHUNK_FIELD_NUMBER: _ClassVar[int]
+    chunk: bytes
+    def __init__(self, chunk: _Optional[bytes] = ...) -> None: ...
 
 class UploadUserAppResponse(_message.Message):
     __slots__ = ("resource_id",)
