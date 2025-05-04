@@ -30,7 +30,7 @@ class QuotaService:
 
     async def register_student_to_mysql(self, login: str, password: str):
         proc = await create_subprocess_shell(
-            f"""sudo docker exec mysql mysql --password={settings.mysql_root_password} --execute="create user '{login}'@'%' identified by '{password}';
+            f"""sudo docker exec mysql mysql --password={settings.mysql_root_password} --user=root --execute="create user '{login}'@'%' identified by '{password}';
 create database {login};
 grant  all on {login}.* to '{login}'@'%';"
 """,

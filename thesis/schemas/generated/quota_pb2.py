@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bquota.proto\x12\x05quota\"1\n\x0e\x41\x63\x63ountRequest\x12\r\n\x05login\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\"\n\x11LoginUserResponse\x12\r\n\x05token\x18\x01 \x01(\t\"\xb8\x03\n\x11\x43reateUserRequest\x12\x33\n\x07student\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.StudentH\x00\x12\x33\n\x07teacher\x18\x02 \x01(\x0b\x32 .quota.CreateUserRequest.TeacherH\x00\x1a\x82\x01\n\x07Profile\x12\x12\n\nfirst_name\x18\x01 \x01(\t\x12\x18\n\x0bmiddle_name\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x11\n\tlast_name\x18\x03 \x01(\t\x12&\n\x07\x61\x63\x63ount\x18\x04 \x01(\x0b\x32\x15.quota.AccountRequestB\x0e\n\x0c_middle_name\x1a\x66\n\x07Student\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.Profile\x12\x10\n\x08group_id\x18\x02 \x01(\t\x12\x16\n\x0eresource_limit\x18\x03 \x01(\t\x1a<\n\x07Teacher\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.ProfileB\x0e\n\x0cuser_profile\"-\n\x15StartContainerRequest\x12\x14\n\x0c\x63ontainer_id\x18\x01 \x01(\t\"\x18\n\x16StartContainerResponse\"\x16\n\x14UploadUserAppRequest\",\n\x15UploadUserAppResponse\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"%\n\x12\x43reateUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\t2\xaa\x02\n\x0cQuotaService\x12<\n\tLoginUser\x12\x15.quota.AccountRequest\x1a\x18.quota.LoginUserResponse\x12\x41\n\nCreateUser\x12\x18.quota.CreateUserRequest\x1a\x19.quota.CreateUserResponse\x12J\n\rUploadUserApp\x12\x1b.quota.UploadUserAppRequest\x1a\x1c.quota.UploadUserAppResponse\x12M\n\x0eStartContainer\x12\x1c.quota.StartContainerRequest\x1a\x1d.quota.StartContainerResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bquota.proto\x12\x05quota\"1\n\x0e\x41\x63\x63ountRequest\x12\r\n\x05login\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\"\n\x11LoginUserResponse\x12\r\n\x05token\x18\x01 \x01(\t\"\xb8\x03\n\x11\x43reateUserRequest\x12\x33\n\x07student\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.StudentH\x00\x12\x33\n\x07teacher\x18\x02 \x01(\x0b\x32 .quota.CreateUserRequest.TeacherH\x00\x1a\x82\x01\n\x07Profile\x12\x12\n\nfirst_name\x18\x01 \x01(\t\x12\x18\n\x0bmiddle_name\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x11\n\tlast_name\x18\x03 \x01(\t\x12&\n\x07\x61\x63\x63ount\x18\x04 \x01(\x0b\x32\x15.quota.AccountRequestB\x0e\n\x0c_middle_name\x1a\x66\n\x07Student\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.Profile\x12\x10\n\x08group_id\x18\x02 \x01(\t\x12\x16\n\x0eresource_limit\x18\x03 \x01(\t\x1a<\n\x07Teacher\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.ProfileB\x0e\n\x0cuser_profile\"-\n\x15StartContainerRequest\x12\x14\n\x0c\x63ontainer_id\x18\x01 \x01(\t\"\x18\n\x16StartContainerResponse\"\x16\n\x14UploadUserAppRequest\",\n\x15UploadUserAppResponse\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"4\n\x12\x43reateUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05token\x18\x02 \x01(\t2\x90\x01\n\rAuthorization\x12<\n\tLoginUser\x12\x15.quota.AccountRequest\x1a\x18.quota.LoginUserResponse\x12\x41\n\nCreateUser\x12\x18.quota.CreateUserRequest\x1a\x19.quota.CreateUserResponse2\xa9\x01\n\x0cQuotaService\x12J\n\rUploadUserApp\x12\x1b.quota.UploadUserAppRequest\x1a\x1c.quota.UploadUserAppResponse\x12M\n\x0eStartContainer\x12\x1c.quota.StartContainerRequest\x1a\x1d.quota.StartContainerResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -52,7 +52,9 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_UPLOADUSERAPPRESPONSE']._serialized_start=649
   _globals['_UPLOADUSERAPPRESPONSE']._serialized_end=693
   _globals['_CREATEUSERRESPONSE']._serialized_start=695
-  _globals['_CREATEUSERRESPONSE']._serialized_end=732
-  _globals['_QUOTASERVICE']._serialized_start=735
-  _globals['_QUOTASERVICE']._serialized_end=1033
+  _globals['_CREATEUSERRESPONSE']._serialized_end=747
+  _globals['_AUTHORIZATION']._serialized_start=750
+  _globals['_AUTHORIZATION']._serialized_end=894
+  _globals['_QUOTASERVICE']._serialized_start=897
+  _globals['_QUOTASERVICE']._serialized_end=1066
 # @@protoc_insertion_point(module_scope)

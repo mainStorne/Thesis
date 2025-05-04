@@ -2,15 +2,16 @@ import asyncio
 
 import structlog
 
-from .server import Server
-from .servicers.quota_servicer import QuotaServicer
+from thesis.server import Server
+from thesis.servicers.auth_servicer import AuthorizationServicer
+from thesis.servicers.quota_servicer import QuotaServicer
 
 log = structlog.get_logger()
 
 
 async def main():
     await log.ainfo("Starting server")
-    server = Server(QuotaServicer(), 50051)
+    server = Server(AuthorizationServicer(), QuotaServicer(), 50051)
     await server.serve()
 
 

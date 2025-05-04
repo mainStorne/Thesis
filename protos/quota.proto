@@ -4,9 +4,14 @@ package quota;
 
 
 
-service QuotaService {
+service Authorization {
     rpc LoginUser(AccountRequest) returns (LoginUserResponse);
+
+      // Создание пользователя в системе, установка квоты на данного пользователя, добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+service QuotaService {
     rpc UploadUserApp(UploadUserAppRequest) returns (UploadUserAppResponse);
     rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
 }
@@ -21,9 +26,6 @@ message LoginUserResponse {
 }
 
 
-/**
-  * Создание пользователя в системе, установка квоты на данного пользователя, добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
-  */
 message CreateUserRequest {
 
     message Profile {
@@ -75,5 +77,6 @@ message UploadUserAppResponse {
 
 message CreateUserResponse {
     string user_id = 1;
+    string token = 2;
 
 }

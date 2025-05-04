@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class QuotaServiceStub(object):
+class AuthorizationStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,28 +35,18 @@ class QuotaServiceStub(object):
             channel: A grpc.Channel.
         """
         self.LoginUser = channel.unary_unary(
-                '/quota.QuotaService/LoginUser',
+                '/quota.Authorization/LoginUser',
                 request_serializer=quota__pb2.AccountRequest.SerializeToString,
                 response_deserializer=quota__pb2.LoginUserResponse.FromString,
                 _registered_method=True)
         self.CreateUser = channel.unary_unary(
-                '/quota.QuotaService/CreateUser',
+                '/quota.Authorization/CreateUser',
                 request_serializer=quota__pb2.CreateUserRequest.SerializeToString,
                 response_deserializer=quota__pb2.CreateUserResponse.FromString,
                 _registered_method=True)
-        self.UploadUserApp = channel.unary_unary(
-                '/quota.QuotaService/UploadUserApp',
-                request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
-                response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
-                _registered_method=True)
-        self.StartContainer = channel.unary_unary(
-                '/quota.QuotaService/StartContainer',
-                request_serializer=quota__pb2.StartContainerRequest.SerializeToString,
-                response_deserializer=quota__pb2.StartContainerResponse.FromString,
-                _registered_method=True)
 
 
-class QuotaServiceServicer(object):
+class AuthorizationServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def LoginUser(self, request, context):
@@ -66,25 +56,14 @@ class QuotaServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CreateUser(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UploadUserApp(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def StartContainer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Создание пользователя в системе, установка квоты на данного пользователя, добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_QuotaServiceServicer_to_server(servicer, server):
+def add_AuthorizationServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'LoginUser': grpc.unary_unary_rpc_method_handler(
                     servicer.LoginUser,
@@ -96,25 +75,15 @@ def add_QuotaServiceServicer_to_server(servicer, server):
                     request_deserializer=quota__pb2.CreateUserRequest.FromString,
                     response_serializer=quota__pb2.CreateUserResponse.SerializeToString,
             ),
-            'UploadUserApp': grpc.unary_unary_rpc_method_handler(
-                    servicer.UploadUserApp,
-                    request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
-                    response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
-            ),
-            'StartContainer': grpc.unary_unary_rpc_method_handler(
-                    servicer.StartContainer,
-                    request_deserializer=quota__pb2.StartContainerRequest.FromString,
-                    response_serializer=quota__pb2.StartContainerResponse.SerializeToString,
-            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'quota.QuotaService', rpc_method_handlers)
+            'quota.Authorization', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('quota.QuotaService', rpc_method_handlers)
+    server.add_registered_method_handlers('quota.Authorization', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class QuotaService(object):
+class Authorization(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -131,7 +100,7 @@ class QuotaService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/quota.QuotaService/LoginUser',
+            '/quota.Authorization/LoginUser',
             quota__pb2.AccountRequest.SerializeToString,
             quota__pb2.LoginUserResponse.FromString,
             options,
@@ -158,7 +127,7 @@ class QuotaService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/quota.QuotaService/CreateUser',
+            '/quota.Authorization/CreateUser',
             quota__pb2.CreateUserRequest.SerializeToString,
             quota__pb2.CreateUserResponse.FromString,
             options,
@@ -170,6 +139,67 @@ class QuotaService(object):
             timeout,
             metadata,
             _registered_method=True)
+
+
+class QuotaServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.UploadUserApp = channel.unary_unary(
+                '/quota.QuotaService/UploadUserApp',
+                request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
+                response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
+                _registered_method=True)
+        self.StartContainer = channel.unary_unary(
+                '/quota.QuotaService/StartContainer',
+                request_serializer=quota__pb2.StartContainerRequest.SerializeToString,
+                response_deserializer=quota__pb2.StartContainerResponse.FromString,
+                _registered_method=True)
+
+
+class QuotaServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def UploadUserApp(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StartContainer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_QuotaServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'UploadUserApp': grpc.unary_unary_rpc_method_handler(
+                    servicer.UploadUserApp,
+                    request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
+                    response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
+            ),
+            'StartContainer': grpc.unary_unary_rpc_method_handler(
+                    servicer.StartContainer,
+                    request_deserializer=quota__pb2.StartContainerRequest.FromString,
+                    response_serializer=quota__pb2.StartContainerResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'quota.QuotaService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('quota.QuotaService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class QuotaService(object):
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def UploadUserApp(request,

@@ -20,6 +20,9 @@ class Inject:
     def __call__(self, func):
         return self._wrap(func)
 
+    def _set_state(self, dict_: dict):
+        pass
+
     def _sub_injection__call__(self, func):
         @self._sub_injection
         @wraps(func)
@@ -27,6 +30,9 @@ class Inject:
             return await self.__inject__(func, *args, **kwargs)
 
         return wrapped
+
+    def _get_injections(self):
+        pass
 
     async def __inject__(self, func, *args, **kwargs):
         return await func(*args, **kwargs)

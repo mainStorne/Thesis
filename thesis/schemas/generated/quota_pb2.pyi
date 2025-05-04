@@ -72,7 +72,9 @@ class UploadUserAppResponse(_message.Message):
     def __init__(self, resource_id: _Optional[str] = ...) -> None: ...
 
 class CreateUserResponse(_message.Message):
-    __slots__ = ("user_id",)
+    __slots__ = ("user_id", "token")
     USER_ID_FIELD_NUMBER: _ClassVar[int]
+    TOKEN_FIELD_NUMBER: _ClassVar[int]
     user_id: str
-    def __init__(self, user_id: _Optional[str] = ...) -> None: ...
+    token: str
+    def __init__(self, user_id: _Optional[str] = ..., token: _Optional[str] = ...) -> None: ...
