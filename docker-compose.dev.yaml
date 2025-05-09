@@ -1,4 +1,3 @@
-
 services:
   devcontainer:
     build:
@@ -20,18 +19,19 @@ services:
       - CAP_SYS_ADMIN
 
     privileged: true
-    command: ["sleep", "infinity"]
-
+    command: [ "sleep", "infinity" ]
 
   db:
     image: postgres:latest
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports: ["5432:5432"]
+    ports: [ "5432:5432" ]
     env_file:
       - .env
-
-
+# web:
+#     build:
+#       context: web
+#       dockerfile: dockerfile
 volumes:
   pgdata:
   etc_volume:

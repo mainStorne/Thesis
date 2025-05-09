@@ -11,5 +11,5 @@ set -e
 mount -o loop,usrquota,grpquota /test/quotafs.img /test/filesystem/
 quotaon -ug /test/filesystem
 cd /workspace/utils
-sudo sg students -c "docker compose -f docker-compose.students.yaml up"
+sudo docker compose -f docker-compose.students.yaml up -d
 echo "Quota test environment ready!"
