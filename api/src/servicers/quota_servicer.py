@@ -9,9 +9,9 @@ from src.schemas.generated.quota_pb2_grpc import QuotaServiceServicer
 
 class QuotaServicer(QuotaServiceServicer):
     @scoped([get_session, authorize])
-    async def UploadUserApp(self, stream: AsyncGenerator[UploadUserAppRequest], context, **kwargs):
+    async def UploadUserApp(self, request: AsyncGenerator[UploadUserAppRequest], context, **kwargs):
         buffer = BytesIO()
-        async for data in stream:
+        async for data in request:
             buffer.write(data.chunk)
 
         gzip.decompress(buffer)
