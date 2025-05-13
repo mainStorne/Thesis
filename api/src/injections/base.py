@@ -11,8 +11,8 @@ def scoped(async_managers: list[AsyncContextManager]):
             state["request"] = args[1]
             async with AsyncExitStack() as stack:
                 for manager in async_managers:
-                    value = await stack.enter_async_context(manager(state))
-                    state[manager.__name__] = value
+                    await stack.enter_async_context(manager(state))
+
                 return await func(args[0], **state)
 
         return wrapper

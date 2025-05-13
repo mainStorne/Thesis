@@ -1,37 +1,34 @@
 import grpc
-
-from src.injections.auth_injection import auth_repository
-from src.injections.base import scoped
-from src.injections.session_injection import database
-from src.repositories.auth_repository import AuthRepository, UserNotFoundException
-from src.schemas.generated.quota_pb2 import AccountRequest, CreateUserRequest, CreateUserResponse, LoginUserResponse
-from src.schemas.generated.quota_pb2_grpc import AuthorizationServicer as _AuthorizationServicer
-from src.services.quota_service import CreateUserException
+from src.grpc.quota_pb2 import AccountRequest, CreateUserRequest, CreateUserResponse, LoginUserResponse
+from src.grpc.quota_pb2_grpc import AuthorizationServicer as _AuthorizationServicer
+from src.injections import get_session, scoped
+from src.repos.quota_repo import CreateUserException
+from src.services.auth_service import AuthService, UserNotFoundException, get_auth_service
 
 
 class AuthorizationServicer(_AuthorizationServicer):
-    @scoped([database.get_session, auth_repository])
+    @scoped([get_session, get_auth_service])
     async def LoginUser(
         self,
         request: AccountRequest,
         context: grpc.aio.ServicerContext,
-        auth_repository: AuthRepository,
-        **kwargs,
+        auth_service: AuthService,
+        **state,
     ):
         try:
-            token = await auth_repository.login_user(request.login, request.password)
+            token = await auth_service.login_user(request.login, request.password)
         except UserNotFoundException:
             return await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
         return LoginUserResponse(token=token)
 
     # TODO create schema validation from pydantic
-    @scoped([database.get_session, auth_repository])
+    @scoped([get_session, get_auth_service])
     async def CreateUser(
         self,
         request: CreateUserRequest,
         context: grpc.aio.ServicerContext,
-        auth_repository: AuthRepository,
-        **kwargs,
+        auth_service: AuthService,
+        **state,
     ):
         field = request.WhichOneof("user_profile")
         if field is None:
@@ -43,7 +40,7 @@ class AuthorizationServicer(_AuthorizationServicer):
             pass
 
         try:
-            user_id, token = await auth_repository.create_user(user_id)
+            user_id, token = await auth_service.create_user(user_id)
         except CreateUserException:
             return await context.abort(grpc.StatusCode.INTERNAL, "User creation failed")
 

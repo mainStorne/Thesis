@@ -11,8 +11,9 @@ class BaseLayout:
             controls=[ft.Container(
                 control, bgcolor=ft.Colors.with_opacity(0.7, ft.Colors.GREEN_400), expand=True
             )],
-            vertical_alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             padding=0,
+            vertical_alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+
 
         )

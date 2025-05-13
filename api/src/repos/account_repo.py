@@ -9,7 +9,7 @@ from src.db.users import Account
 log = get_logger()
 
 
-class IAccountService(ABC):
+class IAccountRepo(ABC):
     def __init__(self, session):
         self._session = session
         super().__init__()
@@ -27,7 +27,7 @@ class IAccountService(ABC):
         pass
 
 
-class AcountService(IAccountService):
+class AcountRepo(IAccountRepo):
     def hash_password(self, password):
         return pbkdf2_sha256.hash(password, salt=b"secret")
 
@@ -37,6 +37,7 @@ class AcountService(IAccountService):
     async def login_user(self, login, hashed_password):
         return (
             await self._session.exec(
-                select(Account).where((Account.login == login) & (Account.hashed_password == hashed_password))
+                select(Account).where((Account.login == login) & (
+                    Account.hashed_password == hashed_password))
             )
         ).one_or_none()

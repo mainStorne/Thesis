@@ -1,0 +1,17 @@
+api:
+  insecure: true
+
+entryPoints:
+  http:
+    address: ":80" # Создать HTTP entrypoint на порт 80
+
+providers:
+  file:
+    directory: "/etc/traefik/dynamic/conf"
+    watch: true
+
+experimental:
+  plugins:
+    sablier:
+      moduleName: "github.com/acouvreur/sablier"
+      version: "v1.8.0"

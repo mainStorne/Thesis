@@ -225,12 +225,8 @@ wheels = [
 
 [[package]]
 name = "flet-easy"
-version = "0.2.9"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0c/34/b71a41f8da3c3f95c695864ca93bb8411fe8f472c72c093614aa033b5caf/flet_easy-0.2.9.tar.gz", hash = "sha256:83a914770c26be4f3c0b45769189727f7592535609b2e7a137ea361920a99269", size = 12853003, upload-time = "2025-01-26T03:48:55.289Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/42/bf7d0c4524184dd093439439ad4e4a26b860d85dac7d9dc80d86250d7220/flet_easy-0.2.9-py3-none-any.whl", hash = "sha256:539b14ef9216d955a154c91410fc5415ad2bf0acce976d82960b62ec34904aa5", size = 30908, upload-time = "2025-01-26T03:48:52.419Z" },
-]
+version = "0.3.0.dev5"
+source = { git = "https://github.com/Daxexs/flet-easy?rev=v0.3.0-dev#1008ac39e6d2f8df06b2ac0912b2642de2c3b069" }
 
 [package.optional-dependencies]
 all = [
@@ -751,11 +747,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "80.3.1"
+version = "80.4.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/70/dc/3976b322de9d2e87ed0007cf04cc7553969b6c7b3f48a565d0333748fbcd/setuptools-80.3.1.tar.gz", hash = "sha256:31e2c58dbb67c99c289f51c16d899afedae292b978f8051efaf6262d8212f927", size = 1315082, upload-time = "2025-05-04T18:47:04.397Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/95/32/0cc40fe41fd2adb80a2f388987f4f8db3c866c69e33e0b4c8b093fdf700e/setuptools-80.4.0.tar.gz", hash = "sha256:5a78f61820bc088c8e4add52932ae6b8cf423da2aff268c23f813cfbb13b4006", size = 1315008, upload-time = "2025-05-09T20:42:27.972Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/7e/5d8af3317ddbf9519b687bd1c39d8737fde07d97f54df65553faca5cffb1/setuptools-80.3.1-py3-none-any.whl", hash = "sha256:ea8e00d7992054c4c592aeb892f6ad51fe1b4d90cc6947cc45c45717c40ec537", size = 1201172, upload-time = "2025-05-04T18:47:02.575Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/93/dba5ed08c2e31ec7cdc2ce75705a484ef0be1a2fecac8a58272489349de8/setuptools-80.4.0-py3-none-any.whl", hash = "sha256:6cdc8cb9a7d590b237dbe4493614a9b75d0559b888047c1f67d49ba50fc3edb2", size = 1200812, upload-time = "2025-05-09T20:42:25.325Z" },
 ]
 
 [[package]]
@@ -954,7 +950,6 @@ name = "websis"
 version = "0.0.1"
 source = { virtual = "." }
 dependencies = [
-    { name = "flet" },
     { name = "flet-easy", extra = ["all"] },
     { name = "grpcio" },
     { name = "grpcio-tools" },
@@ -967,8 +962,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "flet", specifier = ">=0.27.6" },
-    { name = "flet-easy", extras = ["all"], specifier = ">=0.2.9" },
+    { name = "flet-easy", extras = ["all"], git = "https://github.com/Daxexs/flet-easy?rev=v0.3.0-dev" },
     { name = "grpcio", specifier = ">=1.71.0" },
     { name = "grpcio-tools", specifier = ">=1.71.0" },
 ]

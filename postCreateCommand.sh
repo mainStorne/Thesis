@@ -8,8 +8,12 @@ set -e
 #     mkfs.ext4 -F /tmp/quotafs.img
 # fi
 
-mount -o loop,usrquota,grpquota /test/quotafs.img /test/filesystem/
-quotaon -ug /test/filesystem
-cd /workspace/utils
-sudo docker compose -f docker-compose.students.yaml up -d
+mount -o loop,usrquota,grpquota /quotafs.img /fs
+quotaon -ug /fs
+
+cd /workspace
+sudo docker compose -f docker-compose.dev2.yaml up -d
+
+# cd /workspace/utils
+# sudo docker compose -f docker-compose.students.yaml up -d
 echo "Quota test environment ready!"

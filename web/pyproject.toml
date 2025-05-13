@@ -19,8 +19,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "flet>=0.27.6",
-    "flet-easy[all]>=0.2.9",
+    "flet-easy[all]",
     "grpcio>=1.71.0",
     "grpcio-tools>=1.71.0",
 ]
@@ -84,3 +83,6 @@ ignore = [
 
 [tool.ruff.format]
 preview = true
+
+[tool.uv.sources]
+flet-easy = { git = "https://github.com/Daxexs/flet-easy", rev = "v0.3.0-dev" }

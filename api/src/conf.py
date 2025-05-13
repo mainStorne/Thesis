@@ -1,5 +1,5 @@
 from src.database import Database
-from src.settings import Settings
+from src.settings import EnvSettings
 
-settings = Settings()
+settings = EnvSettings()
 database = Database(settings=settings.database)

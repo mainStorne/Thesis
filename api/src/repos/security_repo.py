@@ -4,10 +4,12 @@ from uuid import UUID
 import jwt
 from pydantic import BaseModel, ValidationError
 
+from src.conf import settings
 from src.db.users import Account
+from src.repos.base import RepoError
 
 
-class SecurityException(Exception):
+class SecurityException(RepoError):
     pass
 
 
@@ -19,7 +21,7 @@ class Payload(BaseModel):
     id: UUID
 
 
-class ISecurityService(ABC):
+class ISecurityRepo(ABC):
     def __init__(self, jwt_secret: str, algorithm: str):
         self._jwt_secret = jwt_secret
         self._algorithm = algorithm
@@ -39,7 +41,7 @@ class ISecurityService(ABC):
         pass
 
 
-class JwtSecurityService(ISecurityService):
+class JwtSecurityRepo(ISecurityRepo):
     def encode(self, payload: dict):
         return jwt.encode(payload, key=self._jwt_secret, algorithm=self._algorithm)
 
@@ -55,14 +57,14 @@ class JwtSecurityService(ISecurityService):
         return self.encode({"id": str(account.id)})
 
 
-security = JwtSecurityService("secret", "HS256")
+security_repo = JwtSecurityRepo(settings.jwt_secret, "HS256")
 
 
-class TokenIsMissing(Exception):
+class TokenIsMissing(SecurityException):
     pass
 
 
-class TokenValidator:
+class TokenValidatorRepo:
     def __init__(self, header_name: str):
         self._header_name = header_name
 
@@ -78,4 +80,4 @@ class TokenValidator:
             return value
 
 
-token_validator = TokenValidator("authorization")
+token_validator_repo = TokenValidatorRepo("authorization")

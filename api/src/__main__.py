@@ -15,6 +15,5 @@ async def main():
     await server.serve()
 
 
-# https://plugins.traefik.io/plugins/6715d1d37dd5a6c3095befd4/sablier
 if __name__ == "__main__":
     asyncio.run(main())

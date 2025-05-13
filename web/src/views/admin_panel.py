@@ -2,6 +2,7 @@ import flet as ft
 import flet_easy as fs
 
 from grpc.aio import AioRpcError
+from src import grpc_connection
 from src.grpc.quota_pb2 import AccountRequest, CreateUserRequest
 from src.grpc.quota_pb2_grpc import AuthorizationStub
 from src.layouts.base import BaseLayout
@@ -9,8 +10,7 @@ from src.layouts.base import BaseLayout
 r = fs.AddPagesy(route_prefix='/admin-panel')  # check that this only stuff
 
 
-# We add a page
-@r.page(route="", title="Админ панель")
+@r.page(route="", title="Админ панель", protected_route=True)
 async def create_user(data: fs.Datasy):
     login = fs.Ref()
     fio = fs.Ref()
@@ -23,7 +23,7 @@ async def create_user(data: fs.Datasy):
         return fio.c.value.split()
 
     async def handle_submit(e):
-        stub = AuthorizationStub(data.page.state.grpc_channel)
+        stub = AuthorizationStub(grpc_connection.channel)
         first_name, middle_name, last_name = _parse_fio()
         try:
             request = await stub.CreateUser(CreateUserRequest(student=CreateUserRequest.Student(profile=CreateUserRequest.Profile(

@@ -4,6 +4,7 @@
     "name": "Thesis",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     // Use 'postCreateCommand' to run commands after the container is created.
+    // "user"
     "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/api && uv sync --all-groups && cd /workspace/web && uv sync --all-groups && sudo sh /workspace/postCreateCommand.sh",
     "dockerComposeFile": [
         "../docker-compose.dev.yaml"
@@ -12,9 +13,12 @@
     "forwardPorts": [
         50051,
         5432,
+        5433,
         8002,
+        8000,
+        3306,
         8080,
-        3306
+        80
     ],
     // Configure tool-specific properties.
     "customizations": {
@@ -44,7 +48,6 @@
                 "wmaurer.vscode-jumpy",
                 "tumuerzunong.pycharm-like-snippets",
                 "sankethdev.vscode-proto",
-                "Codeium.codeium",
                 "nefrob.vscode-just-syntax"
             ]
         }
