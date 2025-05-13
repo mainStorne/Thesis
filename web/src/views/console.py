@@ -65,5 +65,5 @@ async def console_page(data: fs.Datasy):
                             width=20, height=20, visible=False, ref=progressbar),
             ft.Button('Загрузить', on_click=lambda _: file_picker.pick_files(
                 allow_multiple=False, allowed_extensions=['zip']), ref=uploadbtn),
-        ], expand=True)
+        ], expand=True, alignment=ft.MainAxisAlignment.CENTER)
     )

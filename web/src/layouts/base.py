@@ -9,9 +9,10 @@ class BaseLayout:
     async def build(self, control: ft.Control):
         return ft.View(
             controls=[ft.Container(
-                control, bgcolor=ft.Colors.with_opacity(0.7, ft.Colors.GREEN_400), expand=True
+                control,  expand=True
             )],
             padding=0,
+            bgcolor=ft.Colors.with_opacity(0.7, ft.Colors.GREEN_400),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
 
