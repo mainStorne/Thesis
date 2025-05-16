@@ -12,7 +12,7 @@ mount -o loop,usrquota,grpquota /quotafs.img /fs
 quotaon -ug /fs
 
 cd /workspace
-sudo docker compose -f docker-compose.dev2.yaml up -d
+sudo docker compose -f docker-compose.dev.yaml up -d
 
 # cd /workspace/utils
 # sudo docker compose -f docker-compose.students.yaml up -d

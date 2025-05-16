@@ -1,4 +1,6 @@
-grpc_directory := "thesis/schemas/generated"
+web_grpc := "web/src/grpc"
+agent_grpc := "agent/src/grpc"
 
 gen_grpc:
-    python -m grpc_tools.protoc -I protos/ --python_out={{grpc_directory}} --pyi_out={{grpc_directory}} --grpc_python_out={{grpc_directory}} protos/quota.proto
+    uv run python -m grpc_tools.protoc -I protos/ --python_out={{web_grpc}} --pyi_out={{web_grpc}} --grpc_python_out={{web_grpc}} protos/quota.proto
+    uv run python -m grpc_tools.protoc -I protos/ --python_out={{agent_grpc}} --pyi_out={{agent_grpc}} --grpc_python_out={{agent_grpc}} protos/quota.proto

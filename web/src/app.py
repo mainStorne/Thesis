@@ -1,7 +1,7 @@
 import flet as ft
 import flet_easy as fs
 
-from src.views import admin_panel, console, login
+from src.ui.views import admin_panel, console, login
 
 
 class App:

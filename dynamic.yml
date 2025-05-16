@@ -12,7 +12,7 @@ http:
 
   routers:
     whoami:
-      rule: Path(`/whoami`)
+      rule: Host(`whoami.dima.com`)
       middlewares:
         - 6isp@file
       service: "whoami"

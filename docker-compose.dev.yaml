@@ -1,49 +1,29 @@
 services:
-  devcontainer:
-    build:
-      context: .
-      dockerfile: dev.Dockerfile
+  reverse-proxy:
+    image: traefik:v3.4
+    volumes:
+      - ./dynamic.yml:/etc/traefik/dynamic/conf/dynamic.yml
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+    ports:
+      - "8080:8080"
+      - "80:80"
+
+  sablier:
+    image: sablierapp/sablier:1.9.0
+    command:
+      - start
+      - --provider.name=docker
 
     volumes:
-      - /home/bevzd/test/filesystem:/fs:rw
-      - /home/bevzd/test/quotafs.img:/quotafs.img
-      - ".:/workspace:cached"
-      - etc_volume:/etc
-      - pgdata:/pgdata
-      # - /sys:/sys:ro
-      # - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run/docker.sock:/var/run/docker.sock
 
-    environment:
-      - POSTGRES_HOST=db
-
-    env_file:
-      - .env
-
-    cap_add:
-      - CAP_SYS_ADMIN
-
-    privileged: true
-    command: [ "sleep", "infinity" ]
+    depends_on:
+      - reverse-proxy
 
   db:
     image: postgres:latest
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports: [ "5432:5432" ]
+      - /pgdata:/var/lib/postgresql/data
+    ports: [ "5433:5432" ]
     env_file:
       - .env
-  # reverse-proxy:
-  #   # The official v3 Traefik docker image
-  #   image: traefik:v3.4
-  #   # Enables the web UI and tells Traefik to listen to docker
-  #   command: --api.insecure=true --providers.docker
-  #   volumes:
-  #     # So that Traefik can listen to the Docker events
-  #     - /var/run/docker.sock:/var/run/docker.sock
-
-  #   network_mode: host
-
-
-volumes:
-  pgdata:
-  etc_volume:

@@ -7,13 +7,54 @@ package quota;
 service Authorization {
     rpc LoginUser(AccountRequest) returns (LoginUserResponse);
 
-      // Создание пользователя в системе, установка квоты на данного пользователя, добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
-    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+      // Создание пользователя в системе, установка квоты на данного пользователя
+      // добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
+      rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
 }
 
 service QuotaService {
+    rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
     rpc UploadUserApp(stream UploadUserAppRequest) returns (UploadUserAppResponse);
     rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
+    rpc GetUserQuota(GetUserQuotaRequest) returns (GetUserQuotaResponse);
+}
+
+service Resource {
+    // shared resource is mySQL
+    // set in metadata resource path or username?
+    rpc CreateSharedResource(CreateSharedResourceRequest) returns (stream CreateSharedResourceResponse);
+    rpc UploadUserApp(stream UploadUserAppRequest) returns (UploadUserAppResponse);
+    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
+}
+
+message CreateSharedResourceRequest {
+    string dockerfile_definition = 1;
+}
+
+message CreateSharedResourceResponse {
+    string logs = 1;
+
+}
+
+message CreateStudentRequest {
+    string quota = 1;
+    string username = 2;
+}
+
+
+message CreateStudentResponse {
+    bool ok = 1;
+}
+
+
+message GetUserQuotaRequest {
+    string username = 1;
+}
+
+message GetUserQuotaResponse {
+    string soft_limit = 1;
+    string hard_limit = 2;
+    string available_space = 3;
 }
 
 message AccountRequest {

@@ -1,0 +1,30 @@
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+
+    volumes:
+      - /home/bevzd/test/filesystem:/fs:rw
+      - /home/bevzd/test/quotafs.img:/quotafs.img
+      - ".:/workspace:cached"
+      - etc_volume:/etc
+      - pgdata:/pgdata
+      # - /sys:/sys:ro
+      # - /var/run/docker.sock:/var/run/docker.sock:rw
+
+    environment:
+      - POSTGRES_HOST=db
+
+    env_file:
+      - .env
+
+    cap_add:
+      - CAP_SYS_ADMIN
+
+    privileged: true
+    command: [ "sleep", "infinity" ]
+
+volumes:
+  pgdata:
+  etc_volume:

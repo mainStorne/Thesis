@@ -1,0 +1,14 @@
+quota:
+  students_shared_base_dir: /students
+  students_home_base_dir: /home
+database:
+  db: api
+  user: vFaWi722cKdlA8PeXuyAYoEYzEI
+  password: iXaoOngwIegUlYVkpU9wc1It1FU
+  host: localhost
+  port: 5432
+mysql_root_password: dima
+students_home_base_dir: /home
+students_shared_base_dir: /students
+max_file_size_in_bytes: 2147483648
+jwt_secret: secret

@@ -1,0 +1,70 @@
+services:
+  # reverse-proxy:
+  #   image: traefik:v3.4
+  #   volumes:
+  #     - ./dynamic.yml:/etc/traefik/dynamic/conf/dynamic.yml
+  #     - ./traefik.yml:/etc/traefik/traefik.yml:ro
+  #   ports:
+  #     - "8080:8080"
+  #     - "80:80"
+
+  # sablier:
+  #   image: sablierapp/sablier:1.9.0
+  #   command:
+  #     - start
+  #     - --provider.name=docker
+
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+
+  #   depends_on:
+  #     - reverse-proxy
+
+  # db:
+  #   image: postgres:latest
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   env_file:
+  #     - .env
+
+  registry:
+    container_name: registry
+    ports:
+      - "target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host"
+    image: registry:2
+
+  thesis:
+    build:
+      context: api
+      dockerfile: Dockerfile
+    image: 127.0.0.1:5000/thesis.agent
+
+    volumes:
+      - /fs:/fs:rw # mount filesystem with usrquota,grpquota
+      - /sys:/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+
+
+    cap_add:
+      - CAP_SYS_ADMIN
+
+    deploy:
+      mode: global
+
+
+  # web:
+  #   build:
+  #     context: web
+  #     dockerfile: Dockerfile
+
+
+  #   env_file:
+  #     - .env
+
+
+
+# volumes:
+#   pgdata:

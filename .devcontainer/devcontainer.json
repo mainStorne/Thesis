@@ -7,7 +7,7 @@
     // "user"
     "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/api && uv sync --all-groups && cd /workspace/web && uv sync --all-groups && sudo sh /workspace/postCreateCommand.sh",
     "dockerComposeFile": [
-        "../docker-compose.dev.yaml"
+        "../docker-compose.devcontainer.yaml"
     ],
     "service": "devcontainer",
     "forwardPorts": [
@@ -48,7 +48,8 @@
                 "wmaurer.vscode-jumpy",
                 "tumuerzunong.pycharm-like-snippets",
                 "sankethdev.vscode-proto",
-                "nefrob.vscode-just-syntax"
+                "nefrob.vscode-just-syntax",
+                "cfcluan.project-scopes"
             ]
         }
     },
