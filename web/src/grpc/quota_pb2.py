@@ -22,47 +22,56 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bquota.proto\x12\x05quota\"7\n\x14\x43reateStudentRequest\x12\r\n\x05quota\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\"#\n\x15\x43reateStudentResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\"\'\n\x13GetUserQuotaRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"W\n\x14GetUserQuotaResponse\x12\x12\n\nsoft_limit\x18\x01 \x01(\t\x12\x12\n\nhard_limit\x18\x02 \x01(\t\x12\x17\n\x0f\x61vailable_space\x18\x03 \x01(\t\"1\n\x0e\x41\x63\x63ountRequest\x12\r\n\x05login\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\"\n\x11LoginUserResponse\x12\r\n\x05token\x18\x01 \x01(\t\"\xb8\x03\n\x11\x43reateUserRequest\x12\x33\n\x07student\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.StudentH\x00\x12\x33\n\x07teacher\x18\x02 \x01(\x0b\x32 .quota.CreateUserRequest.TeacherH\x00\x1a\x82\x01\n\x07Profile\x12\x12\n\nfirst_name\x18\x01 \x01(\t\x12\x18\n\x0bmiddle_name\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x11\n\tlast_name\x18\x03 \x01(\t\x12&\n\x07\x61\x63\x63ount\x18\x04 \x01(\x0b\x32\x15.quota.AccountRequestB\x0e\n\x0c_middle_name\x1a\x66\n\x07Student\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.Profile\x12\x10\n\x08group_id\x18\x02 \x01(\t\x12\x16\n\x0eresource_limit\x18\x03 \x01(\t\x1a<\n\x07Teacher\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.ProfileB\x0e\n\x0cuser_profile\"-\n\x15StartContainerRequest\x12\x14\n\x0c\x63ontainer_id\x18\x01 \x01(\t\"\x18\n\x16StartContainerResponse\"%\n\x14UploadUserAppRequest\x12\r\n\x05\x63hunk\x18\x01 \x01(\x0c\",\n\x15UploadUserAppResponse\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"4\n\x12\x43reateUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05token\x18\x02 \x01(\t2\x90\x01\n\rAuthorization\x12<\n\tLoginUser\x12\x15.quota.AccountRequest\x1a\x18.quota.LoginUserResponse\x12\x41\n\nCreateUser\x12\x18.quota.CreateUserRequest\x1a\x19.quota.CreateUserResponse2\xc0\x02\n\x0cQuotaService\x12J\n\rCreateStudent\x12\x1b.quota.CreateStudentRequest\x1a\x1c.quota.CreateStudentResponse\x12L\n\rUploadUserApp\x12\x1b.quota.UploadUserAppRequest\x1a\x1c.quota.UploadUserAppResponse(\x01\x12M\n\x0eStartContainer\x12\x1c.quota.StartContainerRequest\x1a\x1d.quota.StartContainerResponse\x12G\n\x0cGetUserQuota\x12\x1a.quota.GetUserQuotaRequest\x1a\x1b.quota.GetUserQuotaResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bquota.proto\x12\x05quota\x1a\x1bgoogle/protobuf/empty.proto\":\n\x1b\x43reateSharedResourceRequest\x12\r\n\x05limit\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"M\n\x1c\x43reateSharedResourceResponse\x12\x13\n\x0bvolume_path\x18\x01 \x01(\t\x12\x0b\n\x03uid\x18\x02 \x01(\r\x12\x0b\n\x03gid\x18\x03 \x01(\r\"7\n\x14\x43reateStudentRequest\x12\r\n\x05quota\x18\x01 \x01(\t\x12\x10\n\x08username\x18\x02 \x01(\t\"#\n\x15\x43reateStudentResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\"\'\n\x13GetUserQuotaRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"W\n\x14GetUserQuotaResponse\x12\x12\n\nsoft_limit\x18\x01 \x01(\t\x12\x12\n\nhard_limit\x18\x02 \x01(\t\x12\x17\n\x0f\x61vailable_space\x18\x03 \x01(\t\"1\n\x0e\x41\x63\x63ountRequest\x12\r\n\x05login\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\"\n\x11LoginUserResponse\x12\r\n\x05token\x18\x01 \x01(\t\"\xb8\x03\n\x11\x43reateUserRequest\x12\x33\n\x07student\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.StudentH\x00\x12\x33\n\x07teacher\x18\x02 \x01(\x0b\x32 .quota.CreateUserRequest.TeacherH\x00\x1a\x82\x01\n\x07Profile\x12\x12\n\nfirst_name\x18\x01 \x01(\t\x12\x18\n\x0bmiddle_name\x18\x02 \x01(\tH\x00\x88\x01\x01\x12\x11\n\tlast_name\x18\x03 \x01(\t\x12&\n\x07\x61\x63\x63ount\x18\x04 \x01(\x0b\x32\x15.quota.AccountRequestB\x0e\n\x0c_middle_name\x1a\x66\n\x07Student\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.Profile\x12\x10\n\x08group_id\x18\x02 \x01(\t\x12\x16\n\x0eresource_limit\x18\x03 \x01(\t\x1a<\n\x07Teacher\x12\x31\n\x07profile\x18\x01 \x01(\x0b\x32 .quota.CreateUserRequest.ProfileB\x0e\n\x0cuser_profile\"-\n\x15StartContainerRequest\x12\x14\n\x0c\x63ontainer_id\x18\x01 \x01(\t\"\x18\n\x16StartContainerResponse\"%\n\x14UploadUserAppRequest\x12\r\n\x05\x63hunk\x18\x01 \x01(\x0c\",\n\x15UploadUserAppResponse\x12\x13\n\x0bresource_id\x18\x01 \x01(\t\"4\n\x12\x43reateUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05token\x18\x02 \x01(\t2\x90\x01\n\rAuthorization\x12<\n\tLoginUser\x12\x15.quota.AccountRequest\x1a\x18.quota.LoginUserResponse\x12\x41\n\nCreateUser\x12\x18.quota.CreateUserRequest\x1a\x19.quota.CreateUserResponse2\xc0\x02\n\x0cQuotaService\x12J\n\rCreateStudent\x12\x1b.quota.CreateStudentRequest\x1a\x1c.quota.CreateStudentResponse\x12L\n\rUploadUserApp\x12\x1b.quota.UploadUserAppRequest\x1a\x1c.quota.UploadUserAppResponse(\x01\x12M\n\x0eStartContainer\x12\x1c.quota.StartContainerRequest\x1a\x1d.quota.StartContainerResponse\x12G\n\x0cGetUserQuota\x12\x1a.quota.GetUserQuotaRequest\x1a\x1b.quota.GetUserQuotaResponse2\xc2\x01\n\tResources\x12_\n\x14\x43reateSharedResource\x12\".quota.CreateSharedResourceRequest\x1a#.quota.CreateSharedResourceResponse\x12T\n\x15UploadStudentResource\x12\x1b.quota.UploadUserAppRequest\x1a\x1c.quota.UploadUserAppResponse(\x01\x32\x08\n\x06Systemb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'quota_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_CREATESTUDENTREQUEST']._serialized_start=22
-  _globals['_CREATESTUDENTREQUEST']._serialized_end=77
-  _globals['_CREATESTUDENTRESPONSE']._serialized_start=79
-  _globals['_CREATESTUDENTRESPONSE']._serialized_end=114
-  _globals['_GETUSERQUOTAREQUEST']._serialized_start=116
-  _globals['_GETUSERQUOTAREQUEST']._serialized_end=155
-  _globals['_GETUSERQUOTARESPONSE']._serialized_start=157
-  _globals['_GETUSERQUOTARESPONSE']._serialized_end=244
-  _globals['_ACCOUNTREQUEST']._serialized_start=246
-  _globals['_ACCOUNTREQUEST']._serialized_end=295
-  _globals['_LOGINUSERRESPONSE']._serialized_start=297
-  _globals['_LOGINUSERRESPONSE']._serialized_end=331
-  _globals['_CREATEUSERREQUEST']._serialized_start=334
-  _globals['_CREATEUSERREQUEST']._serialized_end=774
-  _globals['_CREATEUSERREQUEST_PROFILE']._serialized_start=462
-  _globals['_CREATEUSERREQUEST_PROFILE']._serialized_end=592
-  _globals['_CREATEUSERREQUEST_STUDENT']._serialized_start=594
-  _globals['_CREATEUSERREQUEST_STUDENT']._serialized_end=696
-  _globals['_CREATEUSERREQUEST_TEACHER']._serialized_start=698
-  _globals['_CREATEUSERREQUEST_TEACHER']._serialized_end=758
-  _globals['_STARTCONTAINERREQUEST']._serialized_start=776
-  _globals['_STARTCONTAINERREQUEST']._serialized_end=821
-  _globals['_STARTCONTAINERRESPONSE']._serialized_start=823
-  _globals['_STARTCONTAINERRESPONSE']._serialized_end=847
-  _globals['_UPLOADUSERAPPREQUEST']._serialized_start=849
-  _globals['_UPLOADUSERAPPREQUEST']._serialized_end=886
-  _globals['_UPLOADUSERAPPRESPONSE']._serialized_start=888
-  _globals['_UPLOADUSERAPPRESPONSE']._serialized_end=932
-  _globals['_CREATEUSERRESPONSE']._serialized_start=934
-  _globals['_CREATEUSERRESPONSE']._serialized_end=986
-  _globals['_AUTHORIZATION']._serialized_start=989
-  _globals['_AUTHORIZATION']._serialized_end=1133
-  _globals['_QUOTASERVICE']._serialized_start=1136
-  _globals['_QUOTASERVICE']._serialized_end=1456
+  _globals['_CREATESHAREDRESOURCEREQUEST']._serialized_start=51
+  _globals['_CREATESHAREDRESOURCEREQUEST']._serialized_end=109
+  _globals['_CREATESHAREDRESOURCERESPONSE']._serialized_start=111
+  _globals['_CREATESHAREDRESOURCERESPONSE']._serialized_end=188
+  _globals['_CREATESTUDENTREQUEST']._serialized_start=190
+  _globals['_CREATESTUDENTREQUEST']._serialized_end=245
+  _globals['_CREATESTUDENTRESPONSE']._serialized_start=247
+  _globals['_CREATESTUDENTRESPONSE']._serialized_end=282
+  _globals['_GETUSERQUOTAREQUEST']._serialized_start=284
+  _globals['_GETUSERQUOTAREQUEST']._serialized_end=323
+  _globals['_GETUSERQUOTARESPONSE']._serialized_start=325
+  _globals['_GETUSERQUOTARESPONSE']._serialized_end=412
+  _globals['_ACCOUNTREQUEST']._serialized_start=414
+  _globals['_ACCOUNTREQUEST']._serialized_end=463
+  _globals['_LOGINUSERRESPONSE']._serialized_start=465
+  _globals['_LOGINUSERRESPONSE']._serialized_end=499
+  _globals['_CREATEUSERREQUEST']._serialized_start=502
+  _globals['_CREATEUSERREQUEST']._serialized_end=942
+  _globals['_CREATEUSERREQUEST_PROFILE']._serialized_start=630
+  _globals['_CREATEUSERREQUEST_PROFILE']._serialized_end=760
+  _globals['_CREATEUSERREQUEST_STUDENT']._serialized_start=762
+  _globals['_CREATEUSERREQUEST_STUDENT']._serialized_end=864
+  _globals['_CREATEUSERREQUEST_TEACHER']._serialized_start=866
+  _globals['_CREATEUSERREQUEST_TEACHER']._serialized_end=926
+  _globals['_STARTCONTAINERREQUEST']._serialized_start=944
+  _globals['_STARTCONTAINERREQUEST']._serialized_end=989
+  _globals['_STARTCONTAINERRESPONSE']._serialized_start=991
+  _globals['_STARTCONTAINERRESPONSE']._serialized_end=1015
+  _globals['_UPLOADUSERAPPREQUEST']._serialized_start=1017
+  _globals['_UPLOADUSERAPPREQUEST']._serialized_end=1054
+  _globals['_UPLOADUSERAPPRESPONSE']._serialized_start=1056
+  _globals['_UPLOADUSERAPPRESPONSE']._serialized_end=1100
+  _globals['_CREATEUSERRESPONSE']._serialized_start=1102
+  _globals['_CREATEUSERRESPONSE']._serialized_end=1154
+  _globals['_AUTHORIZATION']._serialized_start=1157
+  _globals['_AUTHORIZATION']._serialized_end=1301
+  _globals['_QUOTASERVICE']._serialized_start=1304
+  _globals['_QUOTASERVICE']._serialized_end=1624
+  _globals['_RESOURCES']._serialized_start=1627
+  _globals['_RESOURCES']._serialized_end=1821
+  _globals['_SYSTEM']._serialized_start=1823
+  _globals['_SYSTEM']._serialized_end=1831
 # @@protoc_insertion_point(module_scope)

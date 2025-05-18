@@ -20,11 +20,16 @@ classifiers = [
 
 dependencies = [
     "aiodocker>=0.24.0",
+    "alembic>=1.15.2",
+    "asyncpg>=0.30.0",
     "flet-easy[all]",
     "grpcio>=1.71.0",
     "grpcio-tools>=1.71.0",
+    "passlib>=1.7.4",
     "pydantic-settings-yaml>=0.2.0",
+    "python-multipart>=0.0.20",
     "sqlmodel>=0.0.24",
+    "structlog>=25.3.0",
 ]
 
 

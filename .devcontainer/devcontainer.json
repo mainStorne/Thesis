@@ -5,7 +5,7 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     // Use 'postCreateCommand' to run commands after the container is created.
     // "user"
-    "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/api && uv sync --all-groups && cd /workspace/web && uv sync --all-groups && sudo sh /workspace/postCreateCommand.sh",
+    "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/agent && uv sync --all-groups && cd /workspace/web && uv sync --all-groups && && uv run alembic upgrade head && sudo sh /workspace/postCreateCommand.sh",
     "dockerComposeFile": [
         "../docker-compose.devcontainer.yaml"
     ],

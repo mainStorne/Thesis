@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 import jwt
+from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel, ValidationError
 
+from src.api.repos.base import RepoError
 from src.conf import settings
-from src.db.users import Account
-from src.repos.base import RepoError
 
 
 class SecurityException(RepoError):
@@ -21,10 +21,15 @@ class Payload(BaseModel):
     id: UUID
 
 
+class TokenIsMissing(SecurityException):
+    pass
+
+
 class ISecurityRepo(ABC):
     def __init__(self, jwt_secret: str, algorithm: str):
         self._jwt_secret = jwt_secret
         self._algorithm = algorithm
+        self._header_name = "authorization"
 
     @abstractmethod
     def encode(self, payload: Payload) -> str: ...
@@ -34,10 +39,6 @@ class ISecurityRepo(ABC):
         """
         raises: DecodeException
         """
-        pass
-
-    @abstractmethod
-    def generate_token(self, account: Account):
         pass
 
 
@@ -53,21 +54,6 @@ class JwtSecurityRepo(ISecurityRepo):
         except ValidationError as e:
             raise DecodeException from e
 
-    def generate_token(self, account: Account):
-        return self.encode({"id": str(account.id)})
-
-
-security_repo = JwtSecurityRepo(settings.jwt_secret, "HS256")
-
-
-class TokenIsMissing(SecurityException):
-    pass
-
-
-class TokenValidatorRepo:
-    def __init__(self, header_name: str):
-        self._header_name = header_name
-
     def validate(self, dict_: dict) -> str:
         try:
             token: str = dict_[self._header_name]
@@ -80,4 +66,4 @@ class TokenValidatorRepo:
             return value
 
 
-token_validator_repo = TokenValidatorRepo("authorization")
+security_repo = JwtSecurityRepo(settings.jwt_secret, "HS256")

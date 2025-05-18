@@ -6,8 +6,6 @@ ENV PYTHONUNBUFFERED 1  # Убеждаемся, что вывод логов с�
 ENV VENV_PATH="/opt/venv"
 ENV PATH="$VENV_PATH/bin:$PATH"
 
-WORKDIR /app
-
 FROM ghcr.io/astral-sh/uv:0.5.21 AS uv
 
 FROM base AS builder
@@ -26,6 +24,13 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
 FROM base AS runner
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
 ENV PORT=8080
-COPY websis .
 
-CMD uvicorn websis:app --port ${PORT} --host 0.0.0.0
+WORKDIR /web
+COPY src .
+COPY assets .
+COPY storage .
+COPY alembic.sh .
+COPY alembic.ini .
+
+ENTRYPOINT [ "/web/alembic.sh" ]
+CMD uvicorn src:app --port ${PORT} --host 0.0.0.0

@@ -1,39 +1,34 @@
 syntax = "proto3";
-
 package quota;
 
 
 
-service Authorization {
-    rpc LoginUser(AccountRequest) returns (LoginUserResponse);
-
-      // Создание пользователя в системе, установка квоты на данного пользователя
-      // добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
-      rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-}
-
-service QuotaService {
-    rpc CreateStudent(CreateStudentRequest) returns (CreateStudentResponse);
-    rpc UploadUserApp(stream UploadUserAppRequest) returns (UploadUserAppResponse);
-    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
+service Quota {
     rpc GetUserQuota(GetUserQuotaRequest) returns (GetUserQuotaResponse);
 }
 
-service Resource {
+service Resources {
     // shared resource is mySQL
-    // set in metadata resource path or username?
-    rpc CreateSharedResource(CreateSharedResourceRequest) returns (stream CreateSharedResourceResponse);
-    rpc UploadUserApp(stream UploadUserAppRequest) returns (UploadUserAppResponse);
-    rpc StartContainer(StartContainerRequest) returns (StartContainerResponse);
+    // set in metadata UID, GID resource path or username?
+    rpc CreateSharedResource(CreateSharedResourceRequest) returns (CreateSharedResourceResponse);
+    rpc UploadStudentResource(stream UploadUserAppRequest) returns (UploadUserAppResponse);
+}
+
+
+service System {
+    // get system available space and so on
 }
 
 message CreateSharedResourceRequest {
-    string dockerfile_definition = 1;
+    string limit = 1;
+    string name = 2;
 }
 
-message CreateSharedResourceResponse {
-    string logs = 1;
 
+message CreateSharedResourceResponse {
+    string volume_path = 1;
+    uint32 uid = 2;
+    uint32 gid = 3;
 }
 
 message CreateStudentRequest {

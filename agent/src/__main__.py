@@ -2,16 +2,17 @@ import asyncio
 
 import structlog
 
+from src.init import initialize
 from src.server import Server
-from src.servicers.auth_servicer import AuthorizationServicer
-from src.servicers.quota_servicer import QuotaServicer
 
 log = structlog.get_logger()
 
 
 async def main():
+    await log.ainfo('Initialization')
+    await initialize()
     await log.ainfo("Starting server")
-    server = Server(AuthorizationServicer(), QuotaServicer(), 50051)
+    server = Server(50051)
     await server.serve()
 
 

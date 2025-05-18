@@ -4,7 +4,7 @@ from grpc.aio import AioRpcError
 from src.api.deps import AuthorizeDependency
 from src.grpc.quota_pb2 import GetUserQuotaRequest, UploadUserAppRequest
 from src.grpc.quota_pb2_grpc import QuotaServiceStub
-from src.grpc_connection import grpc_connection
+from src.grpc_pool import grpc_pool
 
 r = APIRouter()
 
@@ -18,7 +18,7 @@ async def flet_uploads(uploadfile: UploadFile, token: str, name: str, auth: Auth
 
     account, _ = auth
     quota_stub = None
-    for channel in grpc_connection.channels:
+    for channel in grpc_pool.channels:
         stub = QuotaServiceStub(channel)
         try:
             response = await stub.GetUserQuota(GetUserQuotaRequest(username=account.login))

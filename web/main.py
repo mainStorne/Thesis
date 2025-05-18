@@ -1,13 +1,13 @@
 
 import flet.fastapi as flet_fastapi
 
+from src.api.integrations import uploadfile
 from src.app import App
-from src.grpc_connection import grpc_connection
-from src.integrations import uploadfile
+from src.grpc_pool import grpc_pool
 
-app = flet_fastapi.FastAPI(on_startup=[grpc_connection.on_startup], on_shutdown=[
+app = flet_fastapi.FastAPI(on_startup=[grpc_pool.on_startup], on_shutdown=[
 
-                           grpc_connection.on_shutdown])
+                           grpc_pool.on_shutdown])
 
 app.include_router(
     uploadfile.r

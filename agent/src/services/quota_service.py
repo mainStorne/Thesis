@@ -55,7 +55,7 @@ class QuotaService:
         await self._quota_repo.create_student_to_filesystem(username)
 
         try:
-            await self._quota_repo.set_quotas_to_student(username, student.resource_limit)
+            await self._quota_repo.set_quota(username, student.resource_limit)
         except QuotaError:
             await self._quota_repo.delete_student_from_filesystem(username)
             raise

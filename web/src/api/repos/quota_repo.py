@@ -1,16 +1,9 @@
 from asyncio.subprocess import PIPE, create_subprocess_shell
-from io import BytesIO
-from uuid import UUID
 
-import pandas as pd
-from sqlmodel import delete
-from sqlmodel.ext.asyncio.session import AsyncSession
 from structlog import get_logger
 
+from src.api.repos.base import RepoError
 from src.conf import settings
-from src.db import Student
-from src.grpc.quota_pb2 import CreateUserRequest
-from src.repos.base import RepoError
 
 log = get_logger()
 
@@ -24,16 +17,6 @@ class QuotaError(RepoError):
 
 
 class QuotaRepo:
-    def __init__(self, session: AsyncSession):
-        self._session = session
-
-    async def get_user_by_id(self, user_id: UUID) -> Student | None:
-        return await self._session.get(Student, user_id)
-
-    async def delete_user(self, id: UUID):  # noqa: A002
-        await self._session.exec(delete(Student).where(Student.id == id))
-        await self._session.commit()
-
     async def register_student_to_mysql(self, login: str, password: str):
         proc = await create_subprocess_shell(
             f"""sudo docker exec mysql mysql --password={settings.mysql_root_password} --user=root --execute="create user '{login}'@'%' identified by '{password}';
@@ -103,31 +86,5 @@ drop database {login};"
             await log.aerror(stderr.decode())
             raise CreateUserException
 
-    async def repquota(self):
-        proc = await create_subprocess_shell(
-            "repquota -O csv /fs", stderr=PIPE, stdout=PIPE
-        )
-        stdout, stderr = await proc.communicate()
-        if stderr:
-            raise QuotaError
-        # User,BlockStatus,FileStatus,BlockUsed,BlockSoftLimit,BlockHardLimit,BlockGrace,FileUsed,FileSoftLimit,FileHardLimit,FileGrace
-        return pd.read_csv(
-            BytesIO(stdout), index_col='User')
 
-    async def delete_student_from_filesystem(self, login: str):
-        proc = await create_subprocess_shell(
-            f"sudo userdel -r {login}",
-            stdout=PIPE,
-            stderr=PIPE,
-        )
-        stdout, stderr = await proc.communicate()
-
-        await log.ainfo(f"Creating user exited with {proc.returncode}")
-        if stdout:
-            await log.awarning(f"Creating user has stdout {stdout.decode()}")
-        if stderr:
-            await log.aerror(stderr.decode())
-
-    async def create_student(self, student: CreateUserRequest.Student) -> None:
-        self._session.add(student)
-        await self._session.commit()
+quota_repo = QuotaRepo()

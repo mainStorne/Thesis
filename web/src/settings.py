@@ -14,14 +14,12 @@ class DatabaseSettings(BaseModel):
     db: str
 
 
-class EnvSettings(YamlBaseSettings):
+class AppSettings(YamlBaseSettings):
     model_config = SettingsConfigDict(
         yaml_file=Path(__file__).parent / 'settings.yml')
-    max_file_size_in_bytes: int
     jwt_secret: str = "secret"
-    mysql_root_password: str = "dima"
-    agent_service_name: str
+    # mysql_root_password: str = "dima"
     database: DatabaseSettings
 
 
-settings = EnvSettings()
+settings = AppSettings()

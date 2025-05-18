@@ -28,5 +28,4 @@ COPY --from=builder ${VENV_PATH} ${VENV_PATH}
 ENV PORT=8080
 COPY src src
 
-# ENTRYPOINT [ "/thesis/alembic.sh" ]
 CMD python -m src

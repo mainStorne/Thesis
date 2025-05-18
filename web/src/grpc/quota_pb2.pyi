@@ -1,8 +1,27 @@
+from google.protobuf import empty_pb2 as _empty_pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class CreateSharedResourceRequest(_message.Message):
+    __slots__ = ("limit", "name")
+    LIMIT_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    limit: str
+    name: str
+    def __init__(self, limit: _Optional[str] = ..., name: _Optional[str] = ...) -> None: ...
+
+class CreateSharedResourceResponse(_message.Message):
+    __slots__ = ("volume_path", "uid", "gid")
+    VOLUME_PATH_FIELD_NUMBER: _ClassVar[int]
+    UID_FIELD_NUMBER: _ClassVar[int]
+    GID_FIELD_NUMBER: _ClassVar[int]
+    volume_path: str
+    uid: int
+    gid: int
+    def __init__(self, volume_path: _Optional[str] = ..., uid: _Optional[int] = ..., gid: _Optional[int] = ...) -> None: ...
 
 class CreateStudentRequest(_message.Message):
     __slots__ = ("quota", "username")

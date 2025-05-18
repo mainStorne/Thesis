@@ -8,5 +8,3 @@ services:
       - /fs/students/db:/var/lib/mysql
 
     user: "1004:1004" # set students UD and GUD
-    ports:
-      - "3305:3306"

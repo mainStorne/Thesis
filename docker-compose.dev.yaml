@@ -4,15 +4,22 @@ services:
     volumes:
       - ./dynamic.yml:/etc/traefik/dynamic/conf/dynamic.yml
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "8080:8080"
-      - "80:80"
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
 
   sablier:
     image: sablierapp/sablier:1.9.0
     command:
       - start
-      - --provider.name=docker
+      - --provider.name=docker_swarm
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -24,6 +31,10 @@ services:
     image: postgres:latest
     volumes:
       - /pgdata:/var/lib/postgresql/data
-    ports: [ "5433:5432" ]
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     env_file:
       - .env

@@ -7,6 +7,9 @@ database:
   password: iXaoOngwIegUlYVkpU9wc1It1FU
   host: localhost
   port: 5432
+
+swarm:
+  overlay_network_name: thesis_default
 mysql_root_password: dima
 students_home_base_dir: /home
 students_shared_base_dir: /students

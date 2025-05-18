@@ -1,9 +1,8 @@
 import flet as ft
 import flet_easy as fs
 
-from grpc.aio import AioRpcError
-from src.grpc.quota_pb2 import AccountRequest
-from src.grpc_connection import grpc_connection
+from src.api.services.auth_service import UserNotFoundException, auth_service
+from src.conf import database
 from src.ui.components.btn import ThesisButton
 from src.ui.components.field import ThesisTextField
 from src.ui.components.panel import ThesisPanel
@@ -18,33 +17,39 @@ async def login(data: fs.Datasy):
     password = fs.Ref()
 
     async def handle_submit(e):
-        stub = grpc_connection.auth_stub
-        try:
-            request = await stub.LoginUser(AccountRequest(login=login.c.value, password=password.c.value))
-        except AioRpcError:
-            login.c.error_text = 'Пользователь с таким паролем или логином не найден!'
-            data.page.update()
-            return
-        else:
-            login.c.error_text = ''
-            await data.login_async(
-                key='token', value=request.token, next_route='/console'
-            )
+        async with database.session_maker() as session:
+            try:
+                token = await auth_service.login(session, login.c.value, password.c.value)
+            except UserNotFoundException:
+                login.c.error_text = "Пользователь с таким паролем или логином не найден!"
+                data.page.update()
+                return
+            except Exception as e:
+                login.c.error_text = "Что-то пошло не так повторите позже"
+                data.page.update()
+                return
+
+            else:
+                login.c.error_text = ""
+                await data.login_async(key="token", value=token, next_route="/console")
 
     return await BaseLayout(data).build(
-        ThesisPanel(content=ft.Column([
-            ft.Column([ThesisTextField('Логин', ref=login),
-                       ThesisTextField('Пароль', password=True,
-                                       can_reveal_password=True, ref=password),
-
-                       ], spacing=20),
-            ft.Container(ThesisButton(on_click=handle_submit,
-                                      text='Вход'),
-                         alignment=ft.alignment.center_right)
-        ],
-            spacing=10,
-
-
-        ),
+        ThesisPanel(
+            content=ft.Column(
+                [
+                    ft.Column(
+                        [
+                            ThesisTextField("Логин", ref=login),
+                            ThesisTextField(
+                                "Пароль", password=True, can_reveal_password=True, ref=password),
+                        ],
+                        spacing=20,
+                    ),
+                    ft.Container(
+                        ThesisButton(on_click=handle_submit, text="Вход"), alignment=ft.alignment.center_right
+                    ),
+                ],
+                spacing=10,
+            ),
         )
     )

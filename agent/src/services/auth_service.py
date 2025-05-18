@@ -1,13 +1,14 @@
 from contextlib import asynccontextmanager
 
 from sqlalchemy.exc import SQLAlchemyError
+from structlog import get_logger
+
 from src.conf import settings
 from src.db.users import Account, Student
 from src.grpc.quota_pb2 import CreateUserRequest
 from src.repos.account_repo import AcountRepo, IAccountRepo
 from src.repos.quota_repo import QuotaError, QuotaRepo
 from src.repos.security_repo import ISecurityRepo, JwtSecurityRepo
-from structlog import get_logger
 
 log = get_logger()
 
@@ -44,7 +45,7 @@ class AuthService:
             await self._quota_repo.create_student_to_filesystem(login)
 
             try:
-                await self._quota_repo.set_quotas_to_student(login, user.resource_limit)
+                await self._quota_repo.set_quota(login, user.resource_limit)
             except QuotaError:
                 await self._quota_repo.delete_student_from_filesystem(login)
                 raise

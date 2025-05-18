@@ -1,45 +1,18 @@
 http:
-  services:
-    whoami:
-      loadBalancer:
-        servers:
-          - url: "http://whoami/"
-
-    httpd:
-      loadBalancer:
-        servers:
-          - url: "http://httpd/"
-
-  routers:
-    whoami:
-      rule: Host(`whoami.dima.com`)
-      middlewares:
-        - 6isp@file
-      service: "whoami"
-
-    httpd:
-      rule: PathPrefix(`/httpd`)
-      middlewares:
-        - 7isp@file
-      service: "httpd"
-
   middlewares:
     6isp:
       plugin:
         sablier:
-          group: 6isp
-          dynamic:
-            displayName: 6ISP
-            refreshFrequency: 5s
-            showDetails: "true"
-            theme: hacker-terminal
+          names: whoami
+          blocking:
+            default-timeout: 1m
           sablierUrl: http://sablier:10000
           sessionDuration: 10s
 
     7isp:
       plugin:
         sablier:
-          group: 7isp
+          group: default
           dynamic:
             displayName: 7ISP
             refreshFrequency: 5s
