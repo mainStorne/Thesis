@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "aiodocker>=0.24.0",
     "alembic>=1.15.2",
+    "asyncmy>=0.2.10",
     "asyncpg>=0.30.0",
     "flet-easy[all]",
     "grpcio>=1.71.0",

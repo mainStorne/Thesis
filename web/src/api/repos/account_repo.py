@@ -5,8 +5,7 @@ from sqlmodel import select
 from structlog import get_logger
 
 from src.api.db.users import Account
-from src.api.repos.security_repo import security_repo
-from src.conf import settings
+from src.api.repos.security_repo import security_repo, Payload
 
 log = get_logger()
 
@@ -31,6 +30,9 @@ class AccountRepo(IAccountRepo):
 
     def generate_token(self, account: Account):
         return security_repo.encode({"id": str(account.id)})
+
+    def decode_token(self, token: str) -> Payload:
+        return security_repo.decode(token)
 
     def hash_password(self, password):
         # todo change secret

@@ -6,7 +6,7 @@ from src.conf import database
 from src.ui.components.btn import ThesisButton
 from src.ui.components.field import ThesisTextField
 from src.ui.components.panel import ThesisPanel
-from src.ui.layouts.base import BaseLayout
+from src.ui.layouts.base import CenteredLayout
 
 r = fs.AddPagesy()
 
@@ -24,7 +24,7 @@ async def login(data: fs.Datasy):
                 login.c.error_text = "Пользователь с таким паролем или логином не найден!"
                 data.page.update()
                 return
-            except Exception as e:
+            except Exception:
                 login.c.error_text = "Что-то пошло не так повторите позже"
                 data.page.update()
                 return
@@ -33,7 +33,7 @@ async def login(data: fs.Datasy):
                 login.c.error_text = ""
                 await data.login_async(key="token", value=token, next_route="/console")
 
-    return await BaseLayout(data).build(
+    return await CenteredLayout(data).build(
         ThesisPanel(
             content=ft.Column(
                 [

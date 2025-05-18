@@ -4,21 +4,20 @@ import tempfile
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
-from pathlib import Path
 from zipfile import ZipFile
 
 
 class IArchiveRepo(ABC):
     @abstractmethod
-    async def create_tar(self, path: Path, buffer: BytesIO):
+    async def create_tar(self, dockerfile: str, buffer: BytesIO):
         pass
 
 
 class ArchiveRepo(IArchiveRepo):
-    async def create_tar(self, path, buffer):
+    async def create_tar(self, dockerfile, buffer):
         loop = asyncio.get_event_loop()
         with ThreadPoolExecutor() as pool:
-            return await loop.run_in_executor(pool, self._create_tar, path, buffer)
+            return await loop.run_in_executor(pool, self._create_tar, dockerfile, buffer)
 
     def _create_tar(self, dockerfile: str, buffer: BytesIO):
         dockerfile = BytesIO(dockerfile.encode())
@@ -39,3 +38,6 @@ class ArchiveRepo(IArchiveRepo):
         t.close()
         f.seek(0)
         return f
+
+
+archive_repo = ArchiveRepo()

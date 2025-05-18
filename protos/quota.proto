@@ -17,6 +17,7 @@ service Resources {
 
 service System {
     // get system available space and so on
+    // rpc GetSystemSpace()
 }
 
 message CreateSharedResourceRequest {

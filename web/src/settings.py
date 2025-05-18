@@ -14,11 +14,17 @@ class DatabaseSettings(BaseModel):
     db: str
 
 
+class SwarmSettings(BaseModel):
+    overlay_network_name: str
+
+
 class AppSettings(YamlBaseSettings):
     model_config = SettingsConfigDict(
         yaml_file=Path(__file__).parent / 'settings.yml')
     jwt_secret: str = "secret"
-    # mysql_root_password: str = "dima"
+    swarm: SwarmSettings
+    mysql_root_password: str
+    domain: str
     database: DatabaseSettings
 
 

@@ -1,16 +1,20 @@
 from structlog import get_logger
 
 from src.api.db.users import Student
+from src.api.repos.account_repo import account_repo
 
 log = get_logger()
 
 
 class UsersRepo:
     async def create_student(self, session, student: Student):
-        student.profile.account.password = self._account_repo.hash_password(student.account.password)
+        student.account.hashed_password = account_repo.hash_password(
+            student.account.hashed_password)
         session.add(student)
         await session.commit()
-        # await self._quota_repo.create_student(student)
+
+    async def get_student_by_token(self, token: str) -> Student:
+        pass
 
     # async def create_user(self, user: CreateUserRequest.Student | CreateUserRequest.Teacher):
     #     if isinstance(user, CreateUserRequest.Teacher):
@@ -60,4 +64,4 @@ class UsersRepo:
     #         return student.id, self._security_repo.generate_token(account)
 
 
-users_service = UsersRepo()
+users_repo = UsersRepo()

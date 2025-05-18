@@ -1,14 +1,20 @@
+from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlmodel import Field, SQLModel, String
+from sqlmodel import Field, Relationship, SQLModel, String
 
-from src.api.db.mixins import UUIDMixin
+from src.api.db.mixins import DateMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from .users import Student
 
 
-class ResourceTemplate(UUIDMixin, SQLModel, table=True):
-    __tablename__ = "resource_templates"
+class ProjectTemplate(UUIDMixin, SQLModel, table=True):
+    __tablename__ = "project_templates"
     name: str = Field(sa_type=String(128))
     dockerfile: str
+    student_projects: list['StudentProject'] = Relationship(
+        back_populates='project_template')
 
 
 class MySQLDataBase(UUIDMixin, SQLModel, table=True):
@@ -17,10 +23,18 @@ class MySQLDataBase(UUIDMixin, SQLModel, table=True):
     root_password: str
 
 
-class StudentProject(UUIDMixin, SQLModel, table=True):
+class StudentProject(UUIDMixin, DateMixin, SQLModel, table=True):
     __tablename__ = "student_projects"
-    resource_template_id: UUID = Field(foreign_key="resource_templates.id")
-    student_id: UUID = Field("students.id")
+    project_template_id: UUID = Field(foreign_key="project_templates.id")
+    student_id: UUID = Field(foreign_key="students.id")
     name: str = Field(sa_type=String(128))
     cpu: str | None = None
     ram: str | None = None
+    byte_size: int = 0
+    project_template: ProjectTemplate = Relationship(
+        back_populates='student_projects')
+
+    project_url: str = Field(
+        sa_column_kwargs={'server_default': 'thesis.com'})
+
+    student: 'Student' = Relationship(back_populates='projects')

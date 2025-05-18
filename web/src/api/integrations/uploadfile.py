@@ -1,47 +1,60 @@
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from io import BytesIO
+from uuid import UUID
+from src.api.repos.mysql_repo import mysql_repo
 
-from grpc.aio import AioRpcError
-from src.api.deps import AuthorizeDependency
-from src.grpc.quota_pb2 import GetUserQuotaRequest, UploadUserAppRequest
-from src.grpc.quota_pb2_grpc import QuotaServiceStub
-from src.grpc_pool import grpc_pool
+from fastapi import APIRouter, HTTPException, Request, status
+
+from src.api.db.resource import ProjectTemplate, StudentProject
+from src.api.deps import AuthorizeDependency, SessionDependency
+from src.api.repos.docker_repo import docker_repo
+from src.conf import settings, uploadfile_queue
 
 r = APIRouter()
 
 
-@r.put("/upload", status_code=204)
-async def flet_uploads(uploadfile: UploadFile, token: str, name: str, auth: AuthorizeDependency):
-    # maybe check for size limit
+@r.put("/upload")
+async def flet_uploads(request: Request, name: str, auth: AuthorizeDependency, session: SessionDependency, template_id: UUID, queue_token: str):
     # check on file extension and so on
-    if not uploadfile.size:
-        raise HTTPException(status_code=422, detail='File without size')
+    filesize = 0
+    buffer = BytesIO()
+    queue = uploadfile_queue[queue_token]
+    async for chunk in request.stream():
+        filesize += len(chunk)
+        buffer.write(chunk)
 
-    account, _ = auth
-    quota_stub = None
-    for channel in grpc_pool.channels:
-        stub = QuotaServiceStub(channel)
-        try:
-            response = await stub.GetUserQuota(GetUserQuotaRequest(username=account.login))
-        except AioRpcError:
-            # maybe release channel from pool
-            continue
+    buffer.seek(0)
+    if filesize == 0:
+        raise HTTPException(
+            status_code=422, detail='File with no size')
+    student, _ = auth
+    if student.logical_limit < student.logical_used + filesize:
+        raise HTTPException(
+            status_code=422, detail='Limit is full')
 
-        if response.available_space < uploadfile.size:
-            continue
+    template = await session.get(ProjectTemplate, template_id)
+    if not template:
+        raise HTTPException(
+            status_code=404, detail='Template not found')
+    service_name = f'{student.account.login}_{name}'
+    if await docker_repo.is_service_name_exists(service_name):
+        raise HTTPException(
+            status_code=422, detail='Project exists')
+    domain_name = f'{student.account.login}.{name}'
+    image = await docker_repo.build_student_project(queue, template.dockerfile, buffer, tag=domain_name)
 
-        quota_stub = stub
-        break
-    if not quota_stub:
-        raise HTTPException(status_code=422, detail='Small space available')
-
-    async def _write_to_grpc_stream():
-        async for chunk in uploadfile.read():
-            yield UploadUserAppRequest(chunk=chunk)
-    try:
-        response = await quota_stub.UploadUserApp(_write_to_grpc_stream(),
-                                                  metadata=(
-            ('filename', name),
-        ))
-    except AioRpcError as e:
-        raise HTTPException(  # noqa: B904
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=e.details())
+    await docker_repo.create_serverless_service(service_name, student.group.middleware_name.split('@')[0], middleware=student.group.middleware_name, image=image, domain=domain_name)
+    queue.put_nowait('Сервис создан')
+    student.logical_used += filesize
+    project_url = f'http://{domain_name}.{settings.domain}'
+    student_project = StudentProject(project_template_id=template_id,
+                                     name=name, byte_size=filesize, project_url=project_url)
+    student_project.student = student
+    session.add(student)
+    session.add(student_project)
+    await session.commit()
+    await mysql_repo.on_create_project(student_project)
+    uploadfile_queue.pop(queue_token)
+    raise HTTPException(
+        status_code=status.HTTP_418_IM_A_TEAPOT, detail={
+            'url': project_url}
+    )

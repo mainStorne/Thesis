@@ -1,9 +1,13 @@
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from sqlmodel import DateTime, Field, Relationship, SQLModel, String, text
 
 from src.api.db.mixins import UUIDMixin
+
+if TYPE_CHECKING:
+    from .resource import StudentProject
 
 
 class Account(UUIDMixin, SQLModel, table=True):
@@ -30,6 +34,8 @@ class Student(UUIDMixin, SQLModel, table=True):
     group_id: UUID = Field(foreign_key="groups.id")
     account_id: UUID = Field(foreign_key="accounts.id")
     account: Account = Relationship(back_populates="student")
+    group: 'Group' = Relationship(back_populates='students')
+    projects: 'StudentProject' = Relationship(back_populates='student')
 
 
 class Teacher(UUIDMixin, SQLModel, table=True):
@@ -42,3 +48,5 @@ class Teacher(UUIDMixin, SQLModel, table=True):
 class Group(UUIDMixin, SQLModel, table=True):
     __tablename__ = "groups"
     name: str = Field(sa_type=String(265))
+    middleware_name: str = Field(sa_type=String(265), nullable=False)
+    students: list[Student] = Relationship(back_populates='group')

@@ -1,16 +1,17 @@
 import flet as ft
 import flet_easy as fs
 
-from src.ui.views import admin_panel, console, login
-from src.ui.views.resources import shared_resource
+from src.ui.views import admin_panel, login
+from src.ui.views.users import projects
 
 
 class App:
 
     def __init__(self):
-        self._app = fs.FletEasy(route_init='/console', route_login='/login')
+        self._app = fs.FletEasy(
+            route_init=projects.r.route_prefix, route_login='/login')
         self._app.add_pages(
-            [login.r, admin_panel.r, console.r, shared_resource.r])
+            [login.r, admin_panel.r, projects.r])
         self._app.login(self.handle_login)
         self._app.config(self.on_config)
 

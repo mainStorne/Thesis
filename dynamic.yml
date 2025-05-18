@@ -3,20 +3,23 @@ http:
     6isp:
       plugin:
         sablier:
-          names: whoami
-          blocking:
-            default-timeout: 1m
-          sablierUrl: http://sablier:10000
-          sessionDuration: 10s
-
-    7isp:
-      plugin:
-        sablier:
-          group: default
+          group: 6isp
           dynamic:
             displayName: 7ISP
             refreshFrequency: 5s
             showDetails: "true"
             theme: hacker-terminal
           sablierUrl: http://sablier:10000
-          sessionDuration: 10s
+          sessionDuration: 2h
+
+    7isp:
+      plugin:
+        sablier:
+          group: 7isp
+          dynamic:
+            displayName: 7ISP
+            refreshFrequency: 5s
+            showDetails: "true"
+            theme: hacker-terminal
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h

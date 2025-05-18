@@ -10,8 +10,9 @@ database:
 
 swarm:
   overlay_network_name: thesis_default
-mysql_root_password: dima
+
+domain: thesis.com
+mysql_root_password: vFaWi722cKdlA8PeXuyAYoEYzEI
 students_home_base_dir: /home
 students_shared_base_dir: /students
-max_file_size_in_bytes: 2147483648
 jwt_secret: secret

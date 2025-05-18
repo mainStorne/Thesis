@@ -1,0 +1,23 @@
+services:
+  whoami:
+    image: 127.0.0.1:5000/dima.dima:latest
+    networks:
+      - swarm
+    deploy:
+      replicas: 0
+
+      labels:
+        - traefik.docker.lbswarm=true
+        - traefik.enable=true
+        - sablier.enable=true
+        - sablier.group=6isp
+        - traefik.http.routers.whoami.rule=Host(`whoami.thesis.com`)
+        - traefik.http.routers.whoami.middlewares=6isp@file
+        - traefik.http.services.whoami.loadbalancer.server.port=80
+        - traefik.http.routers.whoami.entrypoints=http
+
+
+networks:
+  swarm:
+    name: thesis_default
+    external: true
