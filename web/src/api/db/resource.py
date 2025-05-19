@@ -17,10 +17,13 @@ class ProjectTemplate(UUIDMixin, SQLModel, table=True):
         back_populates='project_template')
 
 
-class MySQLDataBase(UUIDMixin, SQLModel, table=True):
-    __tablename__ = 'mysql_databases'
-    name: str = Field(sa_type=String(50))
-    root_password: str
+class MysqlAccount(UUIDMixin, SQLModel, table=True):
+    __tablename__ = 'mysql_accounts'
+    login: str = Field(sa_type=String(30))
+    password: str = Field(sa_type=String(30))
+    student_project_id: UUID = Field(foreign_key='student_projects.id')
+    student_project: "StudentProject" = Relationship(
+        back_populates='mysql_account')
 
 
 class StudentProject(UUIDMixin, DateMixin, SQLModel, table=True):
@@ -38,3 +41,9 @@ class StudentProject(UUIDMixin, DateMixin, SQLModel, table=True):
         sa_column_kwargs={'server_default': 'thesis.com'})
 
     student: 'Student' = Relationship(back_populates='projects')
+    mysql_account: MysqlAccount | None = Relationship(
+        back_populates='student_project')
+
+    @property
+    def view_created_at(self) -> str:
+        return self.created_at.strftime(r'%Y.%d.%m, %H:%M:%S')

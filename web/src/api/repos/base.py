@@ -1,6 +1,7 @@
+from abc import ABC, abstractmethod
+
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from abc import ABC, abstractmethod
 
 from src.api.db.resource import StudentProject
 
@@ -18,6 +19,9 @@ class BaseSQLRepo[SQLModel]:
 
     async def list(self, session: AsyncSession) -> list[SQLModel]:
         return await session.exec(select(self.__root__))
+
+    async def get_by_id(self, session,  id):
+        return await session.exec(select(self.__root__).where(self.__root__.id == id))
 
 
 class IIntegration(ABC):

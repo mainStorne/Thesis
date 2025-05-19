@@ -16,5 +16,7 @@ class Database:
             path=settings.db,
         )
 
-        self._engine = create_async_engine(str(self._sqlalchemy_url))
-        self.session_maker = async_sessionmaker(self._engine, expire_on_commit=False, class_=AsyncSession)
+        self._engine = create_async_engine(
+            str(self._sqlalchemy_url))
+        self.session_maker = async_sessionmaker(
+            self._engine, expire_on_commit=False, class_=AsyncSession)

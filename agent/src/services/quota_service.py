@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from io import BytesIO
 
-from src.conf import settings
+from src.conf import app_settings
 from src.db.users import Account
 from src.grpc.quota_pb2 import CreateStudentRequest
 from src.repos.archive_repo import ArchiveRepo, IArchiveRepo
@@ -9,7 +9,7 @@ from src.repos.docker_repo import docker_repo
 from src.repos.quota_repo import QuotaError, QuotaRepo
 from src.repos.traefik_repo import traefik_repo
 
-from .base import ServiceError
+from agent.src.services.base import ServiceError
 
 
 class RepQuotaException(ServiceError):
@@ -39,7 +39,7 @@ class QuotaService:
 
         if user_df['BlockUsed'] + buffer_size > user_df['BlockHardLimit']:
             raise QuotaExcitedError
-        path = settings.quota.students_home_base_dir / \
+        path = app_settings.quota.students_home_base_dir / \
             self._user_account.username / filename
         try:
             archived = await self._archive_repo.create_tar(path, buffer, self._user_account.username, self._user_account.username)

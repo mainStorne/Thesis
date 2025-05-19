@@ -2,7 +2,7 @@ from asyncio.subprocess import PIPE, create_subprocess_shell
 
 from structlog import get_logger
 
-from src.conf import settings
+from src.conf import app_settings
 from src.repos.base import RepoError
 
 log = get_logger()
@@ -37,7 +37,7 @@ class FilesystemRepo:
 
     async def create_user(self, username: str):
         proc = await create_subprocess_shell(
-            f"sudo useradd -mU -b {settings.quota.students_home_base_dir} -G students {username}",
+            f"sudo useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {username}",
             stdout=PIPE,
             stderr=PIPE,
         )

@@ -3,7 +3,7 @@ from asyncio.subprocess import PIPE, create_subprocess_shell
 from structlog import get_logger
 
 from src.api.repos.base import RepoError
-from src.conf import settings
+from src.conf import app_settings
 
 log = get_logger()
 
@@ -19,7 +19,7 @@ class QuotaError(RepoError):
 class QuotaRepo:
     async def register_student_to_mysql(self, login: str, password: str):
         proc = await create_subprocess_shell(
-            f"""sudo docker exec mysql mysql --password={settings.mysql_root_password} --user=root --execute="create user '{login}'@'%' identified by '{password}';
+            f"""sudo docker exec mysql mysql --password={app_settings.mysql} --user=root --execute="create user '{login}'@'%' identified by '{password}';
 create database {login};
 grant  all on {login}.* to '{login}'@'%';"
 """,
@@ -39,7 +39,7 @@ grant  all on {login}.* to '{login}'@'%';"
 
     async def set_quotas_to_student(self, login: str, quota: str):
         proc = await create_subprocess_shell(
-            f"sudo setquota {login} {quota} {quota} 0 0 {settings.quota.students_shared_base_dir}",
+            f"sudo setquota {login} {quota} {quota} 0 0 {app_settings.quota.students_shared_base_dir}",
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -54,7 +54,7 @@ grant  all on {login}.* to '{login}'@'%';"
 
     async def unregister_student_from_mysql(self, login: str):
         proc = await create_subprocess_shell(
-            f"""sudo docker exec mysql mysql --password={settings.mysql_root_password} --execute="drop user '{login}'@'%';
+            f"""sudo docker exec mysql mysql --password={app_settings.mysql} --execute="drop user '{login}'@'%';
 drop database {login};"
 """,
             stderr=PIPE,
@@ -73,7 +73,7 @@ drop database {login};"
 
     async def create_student_to_filesystem(self, login: str):
         proc = await create_subprocess_shell(
-            f"sudo useradd -mU -b {settings.quota.students_home_base_dir} -G students {login}",
+            f"sudo useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {login}",
             stdout=PIPE,
             stderr=PIPE,
         )

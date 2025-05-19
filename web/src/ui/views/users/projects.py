@@ -8,6 +8,7 @@ import flet_easy as fs
 from src.api.services.project_service import project_service
 from src.conf import database, uploadfile_queue
 from src.ui.components.btn import ThesisButton
+from src.ui.components.dropdown import ThesisDropdown
 from src.ui.components.field import ThesisText, ThesisTextField
 from src.ui.components.log_panel import ThesisListPanel
 from src.ui.components.panel import ThesisPanel
@@ -27,12 +28,11 @@ async def my_projects(data: fs.Datasy):
             ft.Container(ft.Row([ft.Text(project.name, width=150, overflow=ft.TextOverflow.ELLIPSIS, tooltip=ft.Tooltip(
                 project.name, enable_feedback=True)),
                 ft.Text(project.project_template.name, width=150),
-                ft.Text(project.created_at.strftime(
-                    r'%Y.%d.%m, %H:%M:%S'), width=150),
+                ft.Text(project.view_created_at, width=150),
             ]),
                 on_click=lambda e: data.page.go(
                     f'/users/me/projects/{e.control.data['id']}'),
-                data={'id': project.id}
+                data={'id': str(project.id)}
             )
             for project in projects],
     )
@@ -48,6 +48,43 @@ async def my_projects(data: fs.Datasy):
     )
 
 
+def is_uuid(value: str):
+    try:
+        return UUID(value)
+    except ValueError:
+        return
+
+
+@r.page(route='/{id}')
+async def project(data: fs.Datasy, id: UUID):
+    id = is_uuid(id)
+    if not id:
+        return data.page.go('/not-found')
+    async with database.session_maker() as session:
+        project = await project_service.get_by_id(session, id)
+    if not project:
+        return data.page.go('/not-found')
+    if project.mysql_account:
+        extra = [ft.Column([ThesisText(value='Данные Mysql'), ft.Row([ThesisText(
+            value=project.mysql_account.login), ThesisText(value=project.mysql_account.password)])])]
+    else:
+        extra = []
+    return await StudentLayout(data).build(
+        ft.Row([
+            ft.Column([
+                ft.Row([ft.Text(f'Проект: {project.name}')]),
+                ft.Row([ft.Text(f'Создан: {project.view_created_at}')]),
+                ft.Row([ft.Text(f'Размер проекта: {project.byte_size}')]),
+                ft.Row(
+                    [ft.Text(f'URL: {project.project_url}', selectable=True)]),
+                *extra,
+                ft.Row(
+                    [ft.Text(f'Базовый Образ: {project.project_template.name}')]),
+            ])
+        ])
+    )
+
+
 @r.page(route="/create")
 async def create_project(data: fs.Datasy):
     async with database.session_maker() as session:
@@ -56,7 +93,6 @@ async def create_project(data: fs.Datasy):
     project_name = ft.Ref[ft.TextField]()
 
     token = await data.page.client_storage.get_async("token")
-    progressbar = ft.Ref[ft.ProgressBar]()
     queue_token = token_urlsafe(4)
     queue = uploadfile_queue[queue_token]
     upload_btn = ft.Ref()
@@ -71,44 +107,58 @@ async def create_project(data: fs.Datasy):
         scrollable=True,
     )
     log_btn = ft.Ref[ft.Button]()
+    mysql_checkbox = ft.Ref[ft.Checkbox]()
+    page_body = ft.Ref[ft.Column]()
 
     def on_upload(e: ft.FilePickerUploadEvent):
         nonlocal file_picker
+        if not e.error:
+            return
 
-        if e.error:
-            error = e.error[len("Upload endpoint returned code "):]
-            status_code = int(error[:3])
-            if status_code == 500:
-                message.current.value = 'Ошибка повторите позже'
-            # only this trick available for communication
-            if status_code == 418:
-                progressbar.current.visible = False
-                error_body = json.loads(error[5:])['detail']
-                message.current.value = f'Приложения успешно загружено [Перейдите по адресу]({error_body['url']})'
-                upload_btn.current.visible = True
-            else:
-                error_body = json.loads(error[5:])
-                match error_body['detail']:
-                    case 'Project exists':
-                        message.current.value = 'Проект с таким же именем уже существует'
-                    case 'Template not found':
-                        message.current.value = 'Шаблон приложения не найден'
-                    case 'Limit is full':
-                        message.current.value = 'Вы исчерпали свою квоту! Не хватает места'
-                    case 'File with no size':
-                        message.current.value = 'Отправлен файл без размера'
+        error = e.error[len("Upload endpoint returned code "):]
+        status_code = int(error[:3])
+        if status_code == 500:
+            message.current.value = 'Ошибка повторите позже'
+        # only this trick available for communication
+        if status_code == 418:
+            response = json.loads(error[5:])['detail']
 
-            message.current.visible = True
-            progressbar.current.visible = False
-            data.page.overlay.remove(file_picker)
-            file_picker = ft.FilePicker(
-                on_result=on_result, on_upload=on_upload)
-            data.page.overlay.append(file_picker)
+            project_url = response['url']
+            if mysql_checkbox.current.value:
+                mysql_account = response['mysql_account']
+                page_body.current.controls[1] = ft.Column([
+                    ThesisText(value=project_name.current.value),
+                    ft.Text(value=project_url, selectable=True, color=ft.Colors.BLUE,
+                            on_tap=lambda _: data.page.launch_url(project_url)),
+
+                    ft.Row([ThesisText(value='Данные для подключения к Mysql'), ThesisText(
+                        value=f'Логин: {mysql_account['login']}'), ThesisText(value=f'Пароль: {mysql_account['password']}')])
+
+                ])
+            message.current.value = f'Приложение успешно загружено ({response['url']})'
             upload_btn.current.visible = True
 
         else:
-            progressbar.current.value = e.progress
+            response = json.loads(error[5:])
+            match response['detail']:
+                case 'Project exists':
+                    message.current.value = 'Проект с таким же именем уже существует'
+                case 'Template not found':
+                    message.current.value = 'Шаблон приложения не найден'
+                case 'Limit is full':
+                    message.current.value = 'Вы исчерпали свою квоту! Не хватает места'
+                case 'File with no size':
+                    message.current.value = 'Отправлен файл без размера'
+                case _:
+                    message.current.value = 'Что-то пошло не так, попробуйте ещё раз'
 
+        message.current.visible = True
+        data.page.overlay.remove(file_picker)
+        file_picker = ft.FilePicker(
+            on_result=on_result, on_upload=on_upload)
+        data.page.overlay.append(file_picker)
+        upload_btn.current.visible = True
+        mysql_checkbox.current.disabled = False
         data.page.update()
 
     def on_dropdown_change(e: ft.ControlEvent):
@@ -128,21 +178,22 @@ async def create_project(data: fs.Datasy):
     def on_result(e: ft.FilePickerResultEvent):
         message.current.visible = False
         log_btn.current.visible = False
+        mysql_checkbox.current.disabled = True
         if file_picker.result is None and file_picker.result.files is None and not template_id:
             return
 
         upload_list = []
         for f in file_picker.result.files:
+            upload_url = '&create_mysql=true' if mysql_checkbox.current.value else ''
             upload_list.append(
                 ft.FilePickerUploadFile(
                     f.name,
-                    upload_url=f"/upload?token={token}&name={project_name.current.value}&template_id={template_id}&queue_token={queue_token}",
+                    upload_url=f"/upload?token={token}&name={project_name.current.value}&template_id={template_id}&queue_token={queue_token}"+upload_url,
                 )
             )
         file_picker.upload(upload_list)
 
         upload_btn.current.visible = False
-        progressbar.current.visible = True
         data.page.run_task(on_message)
         data.page.update()
 
@@ -162,42 +213,52 @@ async def create_project(data: fs.Datasy):
                           content=ThesisText(value=template.name, text_align=ft.TextAlign.CENTER)) for template in templates]
 
     return await StudentLayout(data).build(
-        ThesisPanel(
-            content=ft.Column(
-                [
-                    ft.Column(
-                        [
-                            ft.Markdown(ref=message, visible=False,
-                                        on_tap_link=lambda e: data.page.launch_url(
-                                            e.data),
-                                        extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
-                                        selectable=True),
-                            ft.ProgressRing(value=0, bgcolor="#eeeeee", width=20,
-                                            height=20, visible=False, ref=progressbar),
-                            ft.Dropdown(leading_icon=ft.Icon(ft.Icons.DASHBOARD_CUSTOMIZE, color=ft.Colors.BLACK), label='Шаблоны проектов:', label_style=ft.TextStyle(color=ft.Colors.BLACK), text_style=ft.TextStyle(
-                                color=ft.Colors.BLACK), on_change=on_dropdown_change,  options=options,
-                                expand=True,
-                            ),
+        ft.Row([
+            ft.Column([
 
-                            ThesisTextField("Название", ref=project_name),
+
+                ThesisPanel(
+                    content=ft.Column(
+                        [
+                            ft.Column(
+                                [
+
+                                    ft.Markdown(ref=message, visible=False,
+                                                on_tap_link=lambda e: data.page.launch_url(
+                                                    e.data),
+                                                extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
+                                                selectable=True),
+
+                                    ThesisDropdown(
+                                        ft.Icons.DASHBOARD_CUSTOMIZE, 'Шаблоны проектов:',
+                                        on_dropdown_change=on_dropdown_change, options=options),
+
+                                    ft.Checkbox(
+                                        ref=mysql_checkbox,
+                                        label=ThesisText(value='Нужно создать mysql базу данных?')),
+
+                                    ThesisTextField(
+                                        "Название", ref=project_name),
+                                ],
+                                spacing=20,
+                                expand=True
+
+                            ),
+                            ThesisButton(
+                                "Загрузить",
+                                on_click=lambda _: file_picker.pick_files(
+                                    allow_multiple=False, allowed_extensions=["zip"]),
+                                ref=upload_btn,
+                            ),
+                            ThesisButton(
+                                "Посмотреть логи сборки",
+                                on_click=lambda _: data.page.open(console_log),
+                                visible=False,
+                                ref=log_btn,
+                            ),
                         ],
-                        spacing=20,
+                        spacing=10,
                     ),
-                    ThesisButton(
-                        "Загрузить",
-                        on_click=lambda _: file_picker.pick_files(
-                            allow_multiple=False, allowed_extensions=["zip"]),
-                        ref=upload_btn,
-                    ),
-                    ThesisButton(
-                        "Посмотреть логи сборки",
-                        on_click=lambda _: data.page.open(console_log),
-                        visible=False,
-                        ref=log_btn,
-                    ),
-                ],
-                spacing=10,
-            ),
-        )
+                )], alignment=ft.MainAxisAlignment.CENTER)], ref=page_body, alignment=ft.MainAxisAlignment.CENTER)
 
     )

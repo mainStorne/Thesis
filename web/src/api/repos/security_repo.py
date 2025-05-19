@@ -2,11 +2,10 @@ from abc import ABC, abstractmethod
 from uuid import UUID
 
 import jwt
-from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel, ValidationError
 
 from src.api.repos.base import RepoError
-from src.conf import settings
+from src.conf import app_settings
 
 
 class SecurityException(RepoError):
@@ -66,4 +65,4 @@ class JwtSecurityRepo(ISecurityRepo):
             return value
 
 
-security_repo = JwtSecurityRepo(settings.jwt_secret, "HS256")
+security_repo = JwtSecurityRepo(app_settings.jwt_secret, "HS256")

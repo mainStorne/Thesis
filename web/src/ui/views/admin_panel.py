@@ -3,7 +3,6 @@ import flet_easy as fs
 from structlog import get_logger
 
 from src.api.db.users import Account, Student
-from src.api.repos.mysql_repo import mysql_repo
 from src.api.repos.users_repo import users_repo
 from src.conf import database
 from src.ui.components.btn import ThesisButton
@@ -40,7 +39,6 @@ async def create_user(data: fs.Datasy):
         async with database.session_maker() as session:
             try:
                 await users_repo.create_student(session, student)
-                await mysql_repo.on_student_create(student, password.current.value)
             except Exception as e:
                 await log.awarning('Error in create student', exc_info=e)
                 login.current.error_text = "Ошибка повторите позже"

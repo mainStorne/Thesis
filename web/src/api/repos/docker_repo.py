@@ -4,7 +4,7 @@ from io import BytesIO
 from aiodocker import Docker
 
 from src.api.repos.archive_repo import archive_repo
-from src.conf import settings
+from src.conf import app_settings
 
 
 class DockerRepo:
@@ -32,7 +32,7 @@ class DockerRepo:
             name=name,
             registry=self._private_registry,
             endpoint_spec={"Mode": "vip"},
-            networks=[settings.swarm.overlay_network_name]
+            networks=[app_settings.swarm.overlay_network_name]
         )
 
     async def is_service_name_exists(self, name: str):
@@ -44,7 +44,7 @@ class DockerRepo:
     async def create_serverless_service(self, name: str, group: str, domain: str,  middleware: str, image: str, port: str = '80'):
         labels = {'sablier.enable': 'true', 'sablier.group': group,  'traefik.enable': 'true',
                   "traefik.docker.lbswarm": "true",
-                  f'traefik.http.routers.{name}.rule': f'Host(`{domain}.{settings.domain}`)',
+                  f'traefik.http.routers.{name}.rule': f'Host(`{domain}.{app_settings.domain}`)',
                   f'traefik.http.routers.{name}.middlewares': middleware,
                   f'traefik.http.services.{name}.loadbalancer.server.port': port,
                   f"traefik.http.routers.{name}.entrypoints": "http"}

@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from sqlalchemy.exc import SQLAlchemyError
 from structlog import get_logger
 
-from src.conf import settings
+from src.conf import app_settings
 from src.db.users import Account, Student
 from src.grpc.quota_pb2 import CreateUserRequest
 from src.repos.account_repo import AcountRepo, IAccountRepo
@@ -92,6 +92,6 @@ async def get_auth_service(state: dict):
     session = state.get("session")
     state['auth_service'] = AuthService(
         QuotaRepo(session=session), AcountRepo(
-            session), JwtSecurityRepo(settings.jwt_secret, "HS256")
+            session), JwtSecurityRepo(app_settings.jwt_secret, "HS256")
     )
     yield

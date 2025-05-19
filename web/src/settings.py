@@ -18,14 +18,19 @@ class SwarmSettings(BaseModel):
     overlay_network_name: str
 
 
+class MysqlSettings(BaseModel):
+    host: str = 'mysql'
+    password: str
+
+
 class AppSettings(YamlBaseSettings):
     model_config = SettingsConfigDict(
         yaml_file=Path(__file__).parent / 'settings.yml')
     jwt_secret: str = "secret"
     swarm: SwarmSettings
-    mysql_root_password: str
+    mysql: MysqlSettings
     domain: str
     database: DatabaseSettings
 
 
-settings = AppSettings()
+app_settings = AppSettings()

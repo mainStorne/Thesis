@@ -1,3 +1,3 @@
 from src.settings import AppSettings
 
-settings = AppSettings()
+app_settings = AppSettings()

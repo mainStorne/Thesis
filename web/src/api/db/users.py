@@ -35,7 +35,7 @@ class Student(UUIDMixin, SQLModel, table=True):
     account_id: UUID = Field(foreign_key="accounts.id")
     account: Account = Relationship(back_populates="student")
     group: 'Group' = Relationship(back_populates='students')
-    projects: 'StudentProject' = Relationship(back_populates='student')
+    projects: list['StudentProject'] = Relationship(back_populates='student')
 
 
 class Teacher(UUIDMixin, SQLModel, table=True):
