@@ -8,6 +8,7 @@ services:
       - /home/bevzd/test/filesystem:/fs:rw
       - /home/bevzd/test/quotafs.img:/quotafs.img
       - ".:/workspace:cached"
+      - "./dynamic.yml:/dynamic.yml:rw"
       - etc_volume:/etc
       - pgdata:/pgdata
       # - /sys:/sys:ro

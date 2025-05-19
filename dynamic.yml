@@ -3,7 +3,7 @@ http:
     6isp:
       plugin:
         sablier:
-          group: 6isp
+          names: dima_vxcvxd
           dynamic:
             displayName: 7ISP
             refreshFrequency: 5s

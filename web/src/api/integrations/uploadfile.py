@@ -66,10 +66,6 @@ async def flet_uploads(request: Request, name: str, auth: AuthorizeDependency, s
                 'id': str(student_project.id), 'url': project_url, 'mysql_account': {'login': mysql.login, 'password': mysql.password}}
         )
 
-    try:
-        await session.commit()
-    finally:
-        uploadfile_queue.pop(queue_token)
     raise HTTPException(
         status_code=status.HTTP_418_IM_A_TEAPOT, detail={
             'id': str(student_project.id), 'url': project_url}
