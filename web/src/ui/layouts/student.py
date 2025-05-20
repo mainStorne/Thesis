@@ -45,7 +45,7 @@ class StudentLayout(BaseLayout):
         return await super().build(ft.Column([
             ft.Container(ft.Row([
                 ft.Text(value='Thesis', color=ft.Colors.WHITE), ft.Text(
-                    value='Dmitry D.D.', color=ft.Colors.WHITE)
+                    value='Dmitry D.D.', color=ft.Colors.WHITE)  # remove this
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN), bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLUE_900),  expand=1),
             ft.Container(ft.Row([ft.Container(rail, expand=1, border=ft.border.only(top=ft.BorderSide(1, ft.Colors.BLUE_600))), ft.Container(control,
                                                                                                                                              alignment=ft.alignment.center, expand=9

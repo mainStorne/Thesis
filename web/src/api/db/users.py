@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from uuid import UUID
 
 from sqlmodel import DateTime, Field, Relationship, SQLModel, String, text
@@ -7,7 +7,7 @@ from sqlmodel import DateTime, Field, Relationship, SQLModel, String, text
 from src.api.db.mixins import UUIDMixin
 
 if TYPE_CHECKING:
-    from .resource import StudentProject
+    from .resource import MysqlAccount, Project
 
 
 class Account(UUIDMixin, SQLModel, table=True):
@@ -20,7 +20,10 @@ class Account(UUIDMixin, SQLModel, table=True):
         sa_type=DateTime(True),
     )
     is_stuff: bool = False
-    student: "Student" = Relationship(back_populates="account")
+    student: Union["Student", None] = Relationship(back_populates="account")
+    projects: list['Project'] = Relationship(back_populates='student')
+    mysql_accounts: list['MysqlAccount'] = Relationship(
+        back_populates='student')
 
 
 class Student(UUIDMixin, SQLModel, table=True):
@@ -35,7 +38,6 @@ class Student(UUIDMixin, SQLModel, table=True):
     account_id: UUID = Field(foreign_key="accounts.id")
     account: Account = Relationship(back_populates="student")
     group: 'Group' = Relationship(back_populates='students')
-    projects: list['StudentProject'] = Relationship(back_populates='student')
 
 
 class Teacher(UUIDMixin, SQLModel, table=True):
@@ -48,5 +50,4 @@ class Teacher(UUIDMixin, SQLModel, table=True):
 class Group(UUIDMixin, SQLModel, table=True):
     __tablename__ = "groups"
     name: str = Field(sa_type=String(265))
-    middleware_name: str = Field(sa_type=String(265), nullable=False)
     students: list[Student] = Relationship(back_populates='group')

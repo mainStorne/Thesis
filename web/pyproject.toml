@@ -23,6 +23,7 @@ dependencies = [
     "alembic>=1.15.2",
     "asyncmy>=0.2.10",
     "asyncpg>=0.30.0",
+    "cryptography>=45.0.2",
     "flet-easy[all]",
     "grpcio>=1.71.0",
     "grpcio-tools>=1.71.0",
@@ -37,10 +38,12 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=7.2.0",
+    "pytest-asyncio>=0.26.0",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.ruff]
 target-version = "py39"
@@ -68,7 +71,8 @@ select = [
     # mccabe
     "C90",
     # pycodestyle
-    "E", "W",
+    "E",
+    "W",
     # pyflakes
     "F",
     # pygrep-hooks

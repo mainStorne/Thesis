@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.api.db.resource import StudentProject
+from src.api.db.resource import Project
 
 
 class RepoError(Exception):
@@ -27,5 +27,5 @@ class BaseSQLRepo[SQLModel]:
 class IIntegration(ABC):
 
     @abstractmethod
-    async def on_create_project(self, student_project: StudentProject):
+    async def on_create_project(self, student_project: Project):
         pass

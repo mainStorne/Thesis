@@ -35,6 +35,7 @@ async def my_projects(data: fs.Datasy):
                 data={'id': str(project.id)}
             )
             for project in projects],
+        scroll=True
     )
     project_card.controls.insert(0, ft.Container(
         ft.Row([ft.Text('Название проекта', width=150),
@@ -44,7 +45,7 @@ async def my_projects(data: fs.Datasy):
 
     return await StudentLayout(data).build(
         ft.Container(ft.Container(
-            project_card,), margin=15, alignment=ft.alignment.top_left)
+            project_card,), margin=15, alignment=ft.alignment.top_left, height=800,)
     )
 
 
@@ -53,36 +54,6 @@ def is_uuid(value: str):
         return UUID(value)
     except ValueError:
         return
-
-
-@r.page(route='/{id}')
-async def project(data: fs.Datasy, id: UUID):
-    id = is_uuid(id)
-    if not id:
-        return data.page.go('/not-found')
-    async with database.session_maker() as session:
-        project = await project_service.get_by_id(session, id)
-    if not project:
-        return data.page.go('/not-found')
-    if project.mysql_account:
-        extra = [ft.Column([ThesisText(value='Данные Mysql'), ft.Row([ThesisText(
-            value=project.mysql_account.login), ThesisText(value=project.mysql_account.password)])])]
-    else:
-        extra = []
-    return await StudentLayout(data).build(
-        ft.Row([
-            ft.Column([
-                ft.Row([ft.Text(f'Проект: {project.name}')]),
-                ft.Row([ft.Text(f'Создан: {project.view_created_at}')]),
-                ft.Row([ft.Text(f'Размер проекта: {project.byte_size}')]),
-                ft.Row(
-                    [ft.Text(f'URL: {project.project_url}', selectable=True)]),
-                *extra,
-                ft.Row(
-                    [ft.Text(f'Базовый Образ: {project.project_template.name}')]),
-            ])
-        ])
-    )
 
 
 @r.page(route="/create")
@@ -108,7 +79,6 @@ async def create_project(data: fs.Datasy):
     )
     log_btn = ft.Ref[ft.Button]()
     mysql_checkbox = ft.Ref[ft.Checkbox]()
-    page_body = ft.Ref[ft.Column]()
 
     def on_upload(e: ft.FilePickerUploadEvent):
         nonlocal file_picker
@@ -120,24 +90,11 @@ async def create_project(data: fs.Datasy):
         if status_code == 500:
             message.current.value = 'Ошибка повторите позже'
         # only this trick available for communication
-        if status_code == 418:
+        elif status_code == 418:
             response = json.loads(error[5:])['detail']
 
             project_url = response['url']
-            if mysql_checkbox.current.value:
-                mysql_account = response['mysql_account']
-                page_body.current.controls[1] = ft.Column([
-                    ThesisText(value=project_name.current.value),
-                    ft.Text(value=project_url, selectable=True, color=ft.Colors.BLUE,
-                            on_tap=lambda _: data.page.launch_url(project_url)),
-
-                    ft.Row([ThesisText(value='Данные для подключения к Mysql'), ThesisText(
-                        value=f'Логин: {mysql_account['login']}'), ThesisText(value=f'Пароль: {mysql_account['password']}')])
-
-                ])
-            message.current.value = f'Приложение успешно загружено ({response['url']})'
-            upload_btn.current.visible = True
-
+            data.page.launch_url(project_url)
         else:
             response = json.loads(error[5:])
             match response['detail']:
@@ -188,7 +145,7 @@ async def create_project(data: fs.Datasy):
             upload_list.append(
                 ft.FilePickerUploadFile(
                     f.name,
-                    upload_url=f"/upload?token={token}&name={project_name.current.value}&template_id={template_id}&queue_token={queue_token}"+upload_url,
+                    upload_url=f"/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}&queue_token={queue_token}"+upload_url,
                 )
             )
         file_picker.upload(upload_list)
@@ -213,52 +170,101 @@ async def create_project(data: fs.Datasy):
                           content=ThesisText(value=template.name, text_align=ft.TextAlign.CENTER)) for template in templates]
 
     return await StudentLayout(data).build(
-        ft.Row([
+        ft.Column([
+            ThesisPanel(
+                content=ft.Column(
+                    [
+                        ft.Column(
+                            [
+
+                                ft.Markdown(ref=message, visible=False,
+                                            on_tap_link=lambda e: data.page.launch_url(
+                                                e.data),
+                                            extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
+                                            selectable=True),
+
+                                ThesisDropdown(
+                                    ft.Icons.DASHBOARD_CUSTOMIZE, 'Шаблоны проектов:',
+                                    on_dropdown_change=on_dropdown_change, options=options),
+
+                                ft.Checkbox(
+                                    ref=mysql_checkbox,
+                                    label=ThesisText(value='Нужно создать mysql базу данных?')),
+
+                                ThesisTextField(
+                                    "Название", ref=project_name),
+                            ],
+                            spacing=20,
+                            expand=True
+
+                        ),
+                        ThesisButton(
+                            "Загрузить",
+                            on_click=lambda _: file_picker.pick_files(
+                                allow_multiple=False, allowed_extensions=["zip"]),
+                            ref=upload_btn,
+                        ),
+
+                        ThesisButton(
+                            "Посмотреть логи сборки",
+                            on_click=lambda _: data.page.open(console_log),
+                            visible=False,
+                            ref=log_btn,
+                        ),
+                    ],
+                    spacing=10,
+                ),
+            )], alignment=ft.MainAxisAlignment.CENTER),
+
+    )
+
+
+@r.page(route='/{id}')
+async def project(data: fs.Datasy, id: UUID):
+    id = is_uuid(id)
+    if not id:
+        return data.page.go('/not-found')
+    async with database.session_maker() as session:
+        project = await project_service.get_by_id(session, id)
+    if not project:
+        return data.page.go('/not-found')
+    if project.mysql_account:
+        extra = [ft.Column([ThesisText(value='Данные Mysql'), ft.Row([ThesisText(
+            value=project.mysql_account.login), ThesisText(value=project.mysql_account.password)])])]
+    else:
+        extra = []
+
+    async def delete_project(e):
+        data.page.close(confirm_deleting)
+
+    confirm_deleting = ft.AlertDialog(
+        modal=True,
+        title=ThesisText(value=f'Удалить проект {project.name}?'),
+        actions=[
+            ft.TextButton('Да', on_click=delete_project),
+            ft.TextButton(
+                'Нет', on_click=lambda _: data.page.close(confirm_deleting)),
+        ]
+
+    )
+    return await StudentLayout(data).build(
+        ThesisPanel(content=ft.Column([
+            ft.Row([
+                ft.Row(
+                    [ThesisText(value=f'Проект: {project.name}', weight=ft.FontWeight.BOLD, size=30)]),
+                ft.IconButton(ft.Icons.DELETE, icon_color=ft.Colors.RED,
+                              on_click=lambda _: data.page.open(confirm_deleting)),
+            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ft.Column([
-
-
-                ThesisPanel(
-                    content=ft.Column(
-                        [
-                            ft.Column(
-                                [
-
-                                    ft.Markdown(ref=message, visible=False,
-                                                on_tap_link=lambda e: data.page.launch_url(
-                                                    e.data),
-                                                extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
-                                                selectable=True),
-
-                                    ThesisDropdown(
-                                        ft.Icons.DASHBOARD_CUSTOMIZE, 'Шаблоны проектов:',
-                                        on_dropdown_change=on_dropdown_change, options=options),
-
-                                    ft.Checkbox(
-                                        ref=mysql_checkbox,
-                                        label=ThesisText(value='Нужно создать mysql базу данных?')),
-
-                                    ThesisTextField(
-                                        "Название", ref=project_name),
-                                ],
-                                spacing=20,
-                                expand=True
-
-                            ),
-                            ThesisButton(
-                                "Загрузить",
-                                on_click=lambda _: file_picker.pick_files(
-                                    allow_multiple=False, allowed_extensions=["zip"]),
-                                ref=upload_btn,
-                            ),
-                            ThesisButton(
-                                "Посмотреть логи сборки",
-                                on_click=lambda _: data.page.open(console_log),
-                                visible=False,
-                                ref=log_btn,
-                            ),
-                        ],
-                        spacing=10,
-                    ),
-                )], alignment=ft.MainAxisAlignment.CENTER)], ref=page_body, alignment=ft.MainAxisAlignment.CENTER)
-
+                ft.Row(
+                    [ThesisText(value=f'Создан: {project.view_created_at}')]),
+                ft.Row(
+                    [ThesisText(value=f'Размер проекта: {project.byte_size}')]),
+                ft.Row(
+                    [ThesisText(value=f'URL: {project.project_url}', selectable=True)]),
+                *extra,
+                ft.Row(
+                    [ThesisText(value=f'Базовый Образ: {project.project_template.name}')]),
+            ],),
+        ],  spacing=20), width=None, height=None)
     )

@@ -1,48 +1,13 @@
-from io import BytesIO
-from pathlib import Path
 
-import pytest
+import yaml
 
-from src.repos.archive_repo import ArchiveRepo
-from src.repos.docker_repo import docker_repo
+from src.api.repos.traefik_repo import traefik_repo
 
 
-@pytest.fixture(autouse=True)
-async def init():
-    await docker_repo.init()
-    yield
-    await docker_repo._docker_client.close()
-
-
+# @pytest.mark.asyncio
 async def test_repo():
-    path = Path(__file__).parent / 'fixture.tar.gz'
-    with open(path, 'rb') as file:
-        async for value in docker_repo._docker_client.images.build(fileobj=file, tag='test:v1', stream=True, encoding='gzip'):
-            print(value)
-
-    await docker_repo._docker_client.containers.run(
-        {
-            "Image": "test:v1"
-        }
-    )
-
-
-@pytest.fixture
-def loop(event_loop):
-    return event_loop
-
-
-@pytest.mark.asyncio
-async def test_uploadfile(monkeypatch):
-    monkeypatch.setattr('shutil.chown', lambda *args: None)
-    repo = ArchiveRepo()
-    path = Path(__file__).parent / 'tests' / 'hello.zip'
-    with open(Path(__file__).parent / 'fixture.zip', 'rb') as buffer:
-        tar = await repo.create_tar(path, BytesIO(buffer.read()), 'dima4', 'dima4')
-
-    image = await docker_repo.build(tar, 'test1')
-    container = await docker_repo._docker_client.containers.run({'Image': 'test1'})
-
-    print(image)
-    print(container)
-    tar.close()
+    service_name = 'test1'
+    middleware_name = await traefik_repo.add_student_service(service_name)
+    with open('/dynamic.yml', 'r+') as file:
+        config = yaml.safe_load(file)
+        assert config['http']['middlewares'][service_name]['plugin']['sablier']

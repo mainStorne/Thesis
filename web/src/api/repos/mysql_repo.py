@@ -9,7 +9,7 @@ from sqlmodel import select, text
 from sqlmodel.ext.asyncio.session import AsyncSession
 from structlog import get_logger
 
-from src.api.db.resource import MysqlAccount, StudentProject
+from src.api.db.resource import MysqlAccount, Project
 from src.api.repos.base import BaseSQLRepo, IIntegration
 from src.conf import app_settings
 
@@ -36,7 +36,7 @@ class MySQLRepo(IIntegration, BaseSQLRepo[MysqlAccount]):
     async def is_exists(self, session,  name: str) -> bool:
         return bool((await session.exec(select(MysqlAccount).where(MysqlAccount.login == name))).one_or_none())
 
-    async def on_create_project(self, student_project: StudentProject):
+    async def on_create_project(self, student_project: Project):
         login = secrets.token_urlsafe(10)
         password = secrets.token_urlsafe(10)
         sql = text(

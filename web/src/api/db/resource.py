@@ -6,43 +6,33 @@ from sqlmodel import Field, Relationship, SQLModel, String
 from src.api.db.mixins import DateMixin, UUIDMixin
 
 if TYPE_CHECKING:
-    from .users import Student
+    from .users import Account
 
 
 class ProjectTemplate(UUIDMixin, SQLModel, table=True):
     __tablename__ = "project_templates"
     name: str = Field(sa_type=String(128))
     dockerfile: str
-    student_projects: list['StudentProject'] = Relationship(
-        back_populates='project_template')
 
 
 class MysqlAccount(UUIDMixin, SQLModel, table=True):
     __tablename__ = 'mysql_accounts'
     login: str = Field(sa_type=String(30))
     password: str = Field(sa_type=String(30))
-    student_project_id: UUID = Field(foreign_key='student_projects.id')
-    student_project: "StudentProject" = Relationship(
-        back_populates='mysql_account')
+    account: 'Account' = Relationship(back_populates='mysql_accounts')
+    account_id: UUID = Field(foreign_key='accounts.id')
 
 
-class StudentProject(UUIDMixin, DateMixin, SQLModel, table=True):
-    __tablename__ = "student_projects"
+class Project(UUIDMixin, DateMixin, SQLModel, table=True):
+    __tablename__ = "projects"
     project_template_id: UUID = Field(foreign_key="project_templates.id")
-    student_id: UUID = Field(foreign_key="students.id")
+    account_id: UUID = Field(foreign_key="accounts.id")
     name: str = Field(sa_type=String(128))
     cpu: str | None = None
     ram: str | None = None
     byte_size: int = 0
     project_template: ProjectTemplate = Relationship(
-        back_populates='student_projects')
-
-    project_url: str = Field(
-        sa_column_kwargs={'server_default': 'thesis.com'})
-
-    student: 'Student' = Relationship(back_populates='projects')
-    mysql_account: MysqlAccount | None = Relationship(
-        back_populates='student_project')
+        back_populates='projects')
 
     @property
     def view_created_at(self) -> str:
