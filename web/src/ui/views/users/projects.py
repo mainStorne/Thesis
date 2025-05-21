@@ -1,18 +1,17 @@
-import json
-from secrets import token_urlsafe
 from uuid import UUID
 
 import flet as ft
 import flet_easy as fs
 
 from src.api.services.project_service import project_service
-from src.conf import database, uploadfile_queue
-from src.ui.components.btn import ThesisButton
+from src.conf import database
+from src.ui.components.console_log import ConsoleLogComponent
 from src.ui.components.dropdown import ThesisDropdown
 from src.ui.components.field import ThesisText, ThesisTextField
-from src.ui.components.log_panel import ThesisListPanel
 from src.ui.components.panel import ThesisPanel
+from src.ui.components.upload_file import UploadProjectComponent
 from src.ui.layouts.student import StudentLayout
+from src.ui.utils import is_uuid
 
 r = fs.AddPagesy(route_prefix='/users/me/projects')
 
@@ -49,113 +48,74 @@ async def my_projects(data: fs.Datasy):
     )
 
 
-def is_uuid(value: str):
-    try:
-        return UUID(value)
-    except ValueError:
-        return
-
-
 @r.page(route="/create")
 async def create_project(data: fs.Datasy):
+    token = await data.page.client_storage.get_async("token")
     async with database.session_maker() as session:
         templates = await project_service.get_project_templates(session)
 
-    project_name = ft.Ref[ft.TextField]()
-
-    token = await data.page.client_storage.get_async("token")
-    queue_token = token_urlsafe(4)
-    queue = uploadfile_queue[queue_token]
-    upload_btn = ft.Ref()
-    template_id: None | UUID = None
-    message = ft.Ref[ft.Markdown]()
-    list_panel = ThesisListPanel(width=500, )
-    console_log = ft.AlertDialog(
-        title=ft.Text("Сборка проекта"),
-        content=list_panel,
-        alignment=ft.alignment.center,
-        title_padding=ft.padding.all(25),
-        scrollable=True,
-    )
-    log_btn = ft.Ref[ft.Button]()
+    status_text = ft.Ref[ft.Markdown]()
     mysql_checkbox = ft.Ref[ft.Checkbox]()
+    project_name = ft.Ref[ft.TextField]()
+    template_id: None | UUID = None
 
-    def on_upload(e: ft.FilePickerUploadEvent):
-        nonlocal file_picker
-        if not e.error:
-            return
+    def on_result(handler):
+        def wrapped():
+            status_text.current.visible = False
+            console_log_component.log_btn.current.visible = False
+            mysql_checkbox.current.disabled = True
+            if not template_id:
+                return
+            upload_url = '&create_mysql=true' if mysql_checkbox.current.value else ''
+            upload_url = f"/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}&queue_token={console_log_component.queue_token}"+upload_url
+            handler(upload_url)
+            data.page.run_task(console_log_component.on_message)
+            data.page.update()
 
-        error = e.error[len("Upload endpoint returned code "):]
-        status_code = int(error[:3])
-        if status_code == 500:
-            message.current.value = 'Ошибка повторите позже'
-        # only this trick available for communication
-        elif status_code == 418:
-            response = json.loads(error[5:])['detail']
+        return wrapped
 
-            project_url = response['url']
-            data.page.launch_url(project_url)
-        else:
-            response = json.loads(error[5:])
-            match response['detail']:
-                case 'Project exists':
-                    message.current.value = 'Проект с таким же именем уже существует'
-                case 'Template not found':
-                    message.current.value = 'Шаблон приложения не найден'
-                case 'Limit is full':
-                    message.current.value = 'Вы исчерпали свою квоту! Не хватает места'
-                case 'File with no size':
-                    message.current.value = 'Отправлен файл без размера'
-                case _:
-                    message.current.value = 'Что-то пошло не так, попробуйте ещё раз'
+    def handle_error_text(func):
+        def wrapped(*args, **kwargs):
+            func(*args, **kwargs)
+            status_text.current.visible = True
+            upload_project_component.upload_btn.current.disabled = False
+            mysql_checkbox.current.disabled = False
+            data.page.update()
 
-        message.current.visible = True
-        data.page.overlay.remove(file_picker)
-        file_picker = ft.FilePicker(
-            on_result=on_result, on_upload=on_upload)
-        data.page.overlay.append(file_picker)
-        upload_btn.current.visible = True
-        mysql_checkbox.current.disabled = False
-        data.page.update()
+        return wrapped
+
+    @handle_error_text
+    def handle_500_server_error():
+        status_text.current.value = 'Ошибка повторите позже'
+
+    @handle_error_text
+    def handle_success(response: dict):
+        project_url = response['url']
+        data.page.launch_url(project_url)
+
+    @handle_error_text
+    def handle_error(status_code: int, detail: str):
+        match detail:
+            case 'Project exists':
+                status_text.current.value = 'Проект с таким же именем уже существует'
+            case 'Template not found':
+                status_text.current.value = 'Шаблон приложения не найден'
+            case 'Limit is full':
+                status_text.current.value = 'Вы исчерпали свою квоту! Не хватает места'
+            case 'File with no size':
+                status_text.current.value = 'Отправлен файл без размера'
+            case _:
+                status_text.current.value = 'Что-то пошло не так, попробуйте ещё раз'
+
+    upload_project_component = UploadProjectComponent(
+
+        data, on_result=on_result, on_500_server_error=handle_500_server_error, on_success=handle_success,
+        on_error=handle_error)
+    console_log_component = ConsoleLogComponent(data)
 
     def on_dropdown_change(e: ft.ControlEvent):
         nonlocal template_id
         template_id = e.control.value
-
-    async def on_message(*args):
-        nonlocal queue, message
-
-        result = await queue.get()
-        log_btn.current.visible = True
-        data.page.open(console_log)
-        while True:
-            result = await queue.get()
-            list_panel.add_message(result)
-
-    def on_result(e: ft.FilePickerResultEvent):
-        message.current.visible = False
-        log_btn.current.visible = False
-        mysql_checkbox.current.disabled = True
-        if file_picker.result is None and file_picker.result.files is None and not template_id:
-            return
-
-        upload_list = []
-        for f in file_picker.result.files:
-            upload_url = '&create_mysql=true' if mysql_checkbox.current.value else ''
-            upload_list.append(
-                ft.FilePickerUploadFile(
-                    f.name,
-                    upload_url=f"/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}&queue_token={queue_token}"+upload_url,
-                )
-            )
-        file_picker.upload(upload_list)
-
-        upload_btn.current.visible = False
-        data.page.run_task(on_message)
-        data.page.update()
-
-    file_picker = ft.FilePicker(on_result=on_result, on_upload=on_upload)
-    data.page.overlay.append(file_picker)
 
     options = [
         ft.DropdownOption(key=template.id,
@@ -177,7 +137,7 @@ async def create_project(data: fs.Datasy):
                         ft.Column(
                             [
 
-                                ft.Markdown(ref=message, visible=False,
+                                ft.Markdown(ref=status_text, visible=False,
                                             on_tap_link=lambda e: data.page.launch_url(
                                                 e.data),
                                             extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
@@ -198,22 +158,12 @@ async def create_project(data: fs.Datasy):
                             expand=True
 
                         ),
-                        ThesisButton(
-                            "Загрузить",
-                            on_click=lambda _: file_picker.pick_files(
-                                allow_multiple=False, allowed_extensions=["zip"]),
-                            ref=upload_btn,
-                        ),
-
-                        ThesisButton(
-                            "Посмотреть логи сборки",
-                            on_click=lambda _: data.page.open(console_log),
-                            visible=False,
-                            ref=log_btn,
-                        ),
+                        upload_project_component.build(),
+                        console_log_component.build(),
                     ],
                     spacing=10,
                 ),
+                height=350,
             )], alignment=ft.MainAxisAlignment.CENTER),
 
     )

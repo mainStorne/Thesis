@@ -1,5 +1,6 @@
 import flet as ft
 import flet_easy as fs
+from structlog import get_logger
 
 from src.api.services.auth_service import UserNotFoundException, auth_service
 from src.conf import database
@@ -8,6 +9,7 @@ from src.ui.components.field import ThesisTextField
 from src.ui.components.panel import ThesisPanel
 from src.ui.layouts.base import CenteredLayout
 
+log = get_logger()
 r = fs.AddPagesy()
 
 
@@ -24,14 +26,15 @@ async def login(data: fs.Datasy):
                 login.c.error_text = "Пользователь с таким паролем или логином не найден!"
                 data.page.update()
                 return
-            except Exception:
+            except Exception as e:
+                await log.aexception('Login error', exc_info=e)
                 login.c.error_text = "Что-то пошло не так повторите позже"
                 data.page.update()
                 return
 
             else:
-                login.c.error_text = ""
-                await data.login_async(key="token", value=token, next_route="/console")
+                login.c.error_text = "4"
+                await data.login_async(key="token", value=token, next_route="/users/me/projects/create")
 
     return await CenteredLayout(data).build(
         ThesisPanel(

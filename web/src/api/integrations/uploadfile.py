@@ -3,6 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import ValidationError
+from structlog import get_logger
 
 from src.api.db.resource import ProjectTemplate
 from src.api.deps import AuthorizeDependency, SessionDependency
@@ -12,6 +13,7 @@ from src.api.services.project_service import project_service
 from src.conf import queue_var, uploadfile_queue
 from src.schemas import DomainLikeName
 
+log = get_logger()
 r = APIRouter()
 
 
@@ -45,7 +47,7 @@ async def create_project(request: Request, project_name: str, auth: AuthorizeDep
         raise HTTPException(
             status_code=404, detail='Template not found')
 
-    service_name = f'{student.account.login}_{project_name}'
+    service_name = f'{student.account.login}_{project_name.root}'
     if await docker_repo.is_service_name_exists(service_name):
         raise HTTPException(
             status_code=422, detail='Project exists')
@@ -53,7 +55,11 @@ async def create_project(request: Request, project_name: str, auth: AuthorizeDep
     queue = uploadfile_queue[queue_token]
     queue_var.set(queue)
     try:
-        project_url, student_project = await project_service._create_project(project_name, session, service_name, filesize, buffer, student, template)
+        project_url, student_project = await project_service._create_project(project_name.root, session, service_name, filesize, buffer, student, template)
+    except Exception as e:
+        await log.aexception('Exception creaing project', exc_info=e)
+        await queue.put('Произошла ошибка!')
+        raise
     finally:
         uploadfile_queue.pop(queue_token)
     if create_mysql:

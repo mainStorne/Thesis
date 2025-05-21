@@ -14,14 +14,6 @@ class App:
             [login.r, admin_panel.r, projects.r])
         self._app.login(self.handle_login)
         self._app.config(self.on_config)
-        # self._app.page_404(route='/not-found',
-        #                    title='Не найдено')(self.not_found)
-
-    # def not_found(self, data: fs.Datasy):
-    #     return ft.View(
-    #         route="/not-found",  controls=[
-    #             ft.Text('Не найдено')
-    #         ])
 
     def on_config(self, page: ft.Page):
         theme = ft.Theme()

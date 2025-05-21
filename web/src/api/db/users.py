@@ -21,9 +21,9 @@ class Account(UUIDMixin, SQLModel, table=True):
     )
     is_stuff: bool = False
     student: Union["Student", None] = Relationship(back_populates="account")
-    projects: list['Project'] = Relationship(back_populates='student')
+    projects: list['Project'] = Relationship(back_populates='account')
     mysql_accounts: list['MysqlAccount'] = Relationship(
-        back_populates='student')
+        back_populates='account')
 
 
 class Student(UUIDMixin, SQLModel, table=True):
@@ -41,6 +41,7 @@ class Student(UUIDMixin, SQLModel, table=True):
 
 
 class Teacher(UUIDMixin, SQLModel, table=True):
+
     account_id: UUID = Field(foreign_key="accounts.id")
     first_name: str = Field(sa_type=String(256))
     middle_name: str | None = Field(sa_type=String(256), nullable=True)

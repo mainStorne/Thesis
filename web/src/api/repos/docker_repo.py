@@ -1,4 +1,3 @@
-from asyncio import Queue
 from io import BytesIO
 
 from aiodocker import Docker
@@ -60,9 +59,9 @@ class DockerRepo:
 
     async def build_student_project(self, dockerfile: str,  student_project: BytesIO, tag: str):
         queue = queue_var.get()
-        queue.put_nowait('Создаю docker образ приложения')
+        await queue.put('Создаю docker образ приложения')
         tar = await archive_repo.create_tar(dockerfile, student_project)
-        queue.put_nowait('Docker Образ приложения создан')
+        await queue.put('Docker Образ приложения создан')
         tag = f"{self._private_registry}/{tag}"
         async for content in self._docker_client.images.build(
             fileobj=tar, encoding="gzip", tag=tag, stream=True
@@ -70,7 +69,7 @@ class DockerRepo:
             message = content.get('stream', None)
             if message is None:
                 continue
-            queue.put_nowait(message)
+            await queue.put(message)
         await self.push_to_registry(tag)
         return tag
 

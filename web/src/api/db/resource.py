@@ -13,6 +13,8 @@ class ProjectTemplate(UUIDMixin, SQLModel, table=True):
     __tablename__ = "project_templates"
     name: str = Field(sa_type=String(128))
     dockerfile: str
+    projects: 'Project' = Relationship(
+        back_populates='project_template')
 
 
 class MysqlAccount(UUIDMixin, SQLModel, table=True):
@@ -33,6 +35,7 @@ class Project(UUIDMixin, DateMixin, SQLModel, table=True):
     byte_size: int = 0
     project_template: ProjectTemplate = Relationship(
         back_populates='projects')
+    account: 'Account' = Relationship(back_populates='projects')
 
     @property
     def view_created_at(self) -> str:
