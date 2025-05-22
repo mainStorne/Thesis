@@ -57,7 +57,7 @@ class DockerRepo:
         return await self.create_service(
             name, labels=labels, task_template={'ContainerSpec': {"Image": image}})
 
-    async def build_student_project(self, dockerfile: str,  student_project: BytesIO, tag: str):
+    async def build_project(self, dockerfile: str,  student_project: BytesIO, tag: str):
         queue = queue_var.get()
         await queue.put('Создаю docker образ приложения')
         tar = await archive_repo.create_tar(dockerfile, student_project)

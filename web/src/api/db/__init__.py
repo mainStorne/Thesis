@@ -1,4 +1,3 @@
 from sqlmodel import SQLModel
-
-from .resource import MysqlAccount, Project, ProjectTemplate
-from .users import Account, Group, Student, Teacher
+from .resource import Project, ProjectImage, MysqlAccount
+from .users import Group, Account, Student, Teacher

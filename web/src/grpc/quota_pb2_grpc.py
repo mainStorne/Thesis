@@ -26,7 +26,7 @@ if _version_not_supported:
     )
 
 
-class AuthorizationStub:
+class QuotaStub:
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,167 +35,15 @@ class AuthorizationStub:
         Args:
             channel: A grpc.Channel.
         """
-        self.LoginUser = channel.unary_unary(
-            '/quota.Authorization/LoginUser',
-            request_serializer=quota__pb2.AccountRequest.SerializeToString,
-            response_deserializer=quota__pb2.LoginUserResponse.FromString,
-            _registered_method=True)
-        self.CreateUser = channel.unary_unary(
-            '/quota.Authorization/CreateUser',
-            request_serializer=quota__pb2.CreateUserRequest.SerializeToString,
-            response_deserializer=quota__pb2.CreateUserResponse.FromString,
-            _registered_method=True)
-
-
-class AuthorizationServicer:
-    """Missing associated documentation comment in .proto file."""
-
-    def LoginUser(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def CreateUser(self, request, context):
-        """Создание пользователя в системе, установка квоты на данного пользователя
-        добавление в базу данных mysql нового пользователя с принадлежащей только ему базой данных
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_AuthorizationServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-        'LoginUser': grpc.unary_unary_rpc_method_handler(
-            servicer.LoginUser,
-            request_deserializer=quota__pb2.AccountRequest.FromString,
-            response_serializer=quota__pb2.LoginUserResponse.SerializeToString,
-        ),
-        'CreateUser': grpc.unary_unary_rpc_method_handler(
-            servicer.CreateUser,
-            request_deserializer=quota__pb2.CreateUserRequest.FromString,
-            response_serializer=quota__pb2.CreateUserResponse.SerializeToString,
-        ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-        'quota.Authorization', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers(
-        'quota.Authorization', rpc_method_handlers)
-
- # This class is part of an EXPERIMENTAL API.
-
-
-class Authorization:
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def LoginUser(request,
-                  target,
-                  options=(),
-                  channel_credentials=None,
-                  call_credentials=None,
-                  insecure=False,
-                  compression=None,
-                  wait_for_ready=None,
-                  timeout=None,
-                  metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/quota.Authorization/LoginUser',
-            quota__pb2.AccountRequest.SerializeToString,
-            quota__pb2.LoginUserResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def CreateUser(request,
-                   target,
-                   options=(),
-                   channel_credentials=None,
-                   call_credentials=None,
-                   insecure=False,
-                   compression=None,
-                   wait_for_ready=None,
-                   timeout=None,
-                   metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/quota.Authorization/CreateUser',
-            quota__pb2.CreateUserRequest.SerializeToString,
-            quota__pb2.CreateUserResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-
-class QuotaServiceStub:
-    """Missing associated documentation comment in .proto file."""
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.CreateStudent = channel.unary_unary(
-            '/quota.QuotaService/CreateStudent',
-            request_serializer=quota__pb2.CreateStudentRequest.SerializeToString,
-            response_deserializer=quota__pb2.CreateStudentResponse.FromString,
-            _registered_method=True)
-        self.UploadUserApp = channel.stream_unary(
-            '/quota.QuotaService/UploadUserApp',
-            request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
-            response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
-            _registered_method=True)
-        self.StartContainer = channel.unary_unary(
-            '/quota.QuotaService/StartContainer',
-            request_serializer=quota__pb2.StartContainerRequest.SerializeToString,
-            response_deserializer=quota__pb2.StartContainerResponse.FromString,
-            _registered_method=True)
         self.GetUserQuota = channel.unary_unary(
-            '/quota.QuotaService/GetUserQuota',
+            '/quota.Quota/GetUserQuota',
             request_serializer=quota__pb2.GetUserQuotaRequest.SerializeToString,
             response_deserializer=quota__pb2.GetUserQuotaResponse.FromString,
             _registered_method=True)
 
 
-class QuotaServiceServicer:
+class QuotaServicer:
     """Missing associated documentation comment in .proto file."""
-
-    def CreateStudent(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UploadUserApp(self, request_iterator, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def StartContainer(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def GetUserQuota(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -204,23 +52,8 @@ class QuotaServiceServicer:
         raise NotImplementedError('Method not implemented!')
 
 
-def add_QuotaServiceServicer_to_server(servicer, server):
+def add_QuotaServicer_to_server(servicer, server):
     rpc_method_handlers = {
-        'CreateStudent': grpc.unary_unary_rpc_method_handler(
-            servicer.CreateStudent,
-            request_deserializer=quota__pb2.CreateStudentRequest.FromString,
-            response_serializer=quota__pb2.CreateStudentResponse.SerializeToString,
-        ),
-        'UploadUserApp': grpc.stream_unary_rpc_method_handler(
-            servicer.UploadUserApp,
-            request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
-            response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
-        ),
-        'StartContainer': grpc.unary_unary_rpc_method_handler(
-            servicer.StartContainer,
-            request_deserializer=quota__pb2.StartContainerRequest.FromString,
-            response_serializer=quota__pb2.StartContainerResponse.SerializeToString,
-        ),
         'GetUserQuota': grpc.unary_unary_rpc_method_handler(
             servicer.GetUserQuota,
             request_deserializer=quota__pb2.GetUserQuotaRequest.FromString,
@@ -228,97 +61,15 @@ def add_QuotaServiceServicer_to_server(servicer, server):
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'quota.QuotaService', rpc_method_handlers)
+        'quota.Quota', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers(
-        'quota.QuotaService', rpc_method_handlers)
+    server.add_registered_method_handlers('quota.Quota', rpc_method_handlers)
 
  # This class is part of an EXPERIMENTAL API.
 
 
-class QuotaService:
+class Quota:
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def CreateStudent(request,
-                      target,
-                      options=(),
-                      channel_credentials=None,
-                      call_credentials=None,
-                      insecure=False,
-                      compression=None,
-                      wait_for_ready=None,
-                      timeout=None,
-                      metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/quota.QuotaService/CreateStudent',
-            quota__pb2.CreateStudentRequest.SerializeToString,
-            quota__pb2.CreateStudentResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def UploadUserApp(request_iterator,
-                      target,
-                      options=(),
-                      channel_credentials=None,
-                      call_credentials=None,
-                      insecure=False,
-                      compression=None,
-                      wait_for_ready=None,
-                      timeout=None,
-                      metadata=None):
-        return grpc.experimental.stream_unary(
-            request_iterator,
-            target,
-            '/quota.QuotaService/UploadUserApp',
-            quota__pb2.UploadUserAppRequest.SerializeToString,
-            quota__pb2.UploadUserAppResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def StartContainer(request,
-                       target,
-                       options=(),
-                       channel_credentials=None,
-                       call_credentials=None,
-                       insecure=False,
-                       compression=None,
-                       wait_for_ready=None,
-                       timeout=None,
-                       metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/quota.QuotaService/StartContainer',
-            quota__pb2.StartContainerRequest.SerializeToString,
-            quota__pb2.StartContainerResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
 
     @staticmethod
     def GetUserQuota(request,
@@ -334,7 +85,7 @@ class QuotaService:
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/quota.QuotaService/GetUserQuota',
+            '/quota.Quota/GetUserQuota',
             quota__pb2.GetUserQuotaRequest.SerializeToString,
             quota__pb2.GetUserQuotaResponse.FromString,
             options,
@@ -469,6 +220,7 @@ class Resources:
 
 class SystemStub:
     """get system available space and so on
+    rpc GetSystemSpace()
     """
 
     def __init__(self, channel):
@@ -481,6 +233,7 @@ class SystemStub:
 
 class SystemServicer:
     """get system available space and so on
+    rpc GetSystemSpace()
     """
 
 
@@ -497,4 +250,5 @@ def add_SystemServicer_to_server(servicer, server):
 
 class System:
     """get system available space and so on
+    rpc GetSystemSpace()
     """

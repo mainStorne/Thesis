@@ -5,11 +5,12 @@ Revises: f3b23d776759
 Create Date: 2025-05-21 18:32:41.845738
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
-from alembic import op
 import sqlalchemy as sa
 import sqlmodel
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
@@ -29,7 +30,7 @@ def upgrade() -> None:
                         timezone=True), nullable=True),
                     sa.Column('id', sa.Uuid(), server_default=sa.text(
                         'uuid_generate_v4()'), nullable=False),
-                    sa.Column('project_template_id',
+                    sa.Column('project_image_id',
                               sa.Uuid(), nullable=False),
                     sa.Column('account_id', sa.Uuid(), nullable=False),
                     sa.Column('name', sa.String(length=128), nullable=False),
@@ -39,8 +40,8 @@ def upgrade() -> None:
                         'ram', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
                     sa.Column('byte_size', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(['account_id'], ['accounts.id'], ),
-                    sa.ForeignKeyConstraint(['project_template_id'], [
-                        'project_templates.id'], ),
+                    sa.ForeignKeyConstraint(['project_image_id'], [
+                        'project_images.id'], ),
                     sa.PrimaryKeyConstraint('id')
                     )
     op.drop_column('mysql_accounts', 'student_project_id')
@@ -77,7 +78,7 @@ def downgrade() -> None:
                               autoincrement=False, nullable=True),
                     sa.Column('ram', sa.VARCHAR(),
                               autoincrement=False, nullable=True),
-                    sa.Column('project_template_id', sa.UUID(),
+                    sa.Column('project_image_id', sa.UUID(),
                               autoincrement=False, nullable=False),
                     sa.Column('byte_size', sa.INTEGER(),
                               autoincrement=False, nullable=False),
@@ -87,8 +88,8 @@ def downgrade() -> None:
                         timezone=True), autoincrement=False, nullable=True),
                     sa.Column('project_url', sa.VARCHAR(), server_default=sa.text(
                         "'thesis.com'::character varying"), autoincrement=False, nullable=False),
-                    sa.ForeignKeyConstraint(['project_template_id'], [
-                        'project_templates.id'], name='student_projects_project_template_id_fkey'),
+                    sa.ForeignKeyConstraint(['project_image_id'], [
+                        'project_images.id'], name='student_projects_project_image_id_fkey'),
                     sa.ForeignKeyConstraint(
                         ['student_id'], ['students.id'], name='student_projects_student_id_fkey'),
                     sa.PrimaryKeyConstraint('id', name='student_projects_pkey')

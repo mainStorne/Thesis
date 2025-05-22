@@ -36,10 +36,7 @@ dependencies = [
 
 
 [dependency-groups]
-dev = [
-    "pytest>=7.2.0",
-    "pytest-asyncio>=0.26.0",
-]
+dev = ["pytest>=7.2.0", "pytest-asyncio>=0.26.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -49,6 +46,7 @@ asyncio_mode = "auto"
 target-version = "py39"
 line-length = 120
 fix = true
+extend-exclude = ["src/api/db/__init__.py"] # for sqlalchemy
 
 [tool.ruff.lint]
 select = [

@@ -5,8 +5,8 @@ from sqlalchemy.orm import contains_eager, joinedload
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.api.db.resource import MysqlAccount, Project, ProjectTemplate
-from src.api.db.users import Account, Student
+from src.api.db.resource import MysqlAccount, Project, ProjectImage
+from src.api.db.users import Account
 from src.api.repos.account_repo import account_repo
 from src.api.repos.base import BaseSQLRepo
 from src.api.repos.docker_repo import docker_repo
@@ -14,50 +14,66 @@ from src.api.repos.traefik_repo import traefik_repo
 from src.conf import app_settings, queue_var
 from src.schemas import DomainLikeName
 
+from .base import NotFound
+
 
 class ProjectService(BaseSQLRepo):
 
-    async def get_student_projects(self, session: AsyncSession, token: str):
+    async def get_user_projects(self, session: AsyncSession, token: str):
         payload = account_repo.decode_token(token)
 
-        stmt = select(Project).join(ProjectTemplate, ProjectTemplate.id == Project.project_template_id).join(Student, Student.id == Project.student_id).join(
-            Account, Account.id == Student.account_id).where(Account.id == payload.id).options(contains_eager(Project.project_template))
+        stmt = select(Project).join(ProjectImage, ProjectImage.id ==
+                                    Project.project_image_id).join(Account, Account.id == Project.account_id
+                                                                   ).where(Account.id == payload.id).options(contains_eager(Project.project_image))
 
         return await session.exec(stmt)
 
     async def delete_project(self, project_name: str):
         pass
 
-    async def get_project_templates(self, session: AsyncSession) -> list[ProjectTemplate]:
-        return await session.exec(select(ProjectTemplate))
+    async def get_project_images(self, session: AsyncSession) -> list[ProjectImage]:
+        return await session.exec(select(ProjectImage))
 
     async def get_by_id(self, session, id: UUID) -> Project | None:
-        return (await session.exec(select(Project).where(Project.id == str(id)).options(joinedload(Project.mysql_account), joinedload(Project.project_template)))).one_or_none()
+        return (await session.exec(select(Project).where(Project.id == str(id)).options(joinedload(Project.project_image)))).one_or_none()
 
     async def get_integrations(self, session: AsyncSession):
         await session.exec(select(MysqlAccount))
 
-    async def create_project(self, project_name: DomainLikeName): ...
+    async def create_student_project(
+            self, project_name: DomainLikeName, account: Account, buffer: BytesIO, session: AsyncSession, template_id: UUID, filesize: int) -> Project:
 
-    async def _create_project(self, project_name: str, session: AsyncSession, service_name: str, filesize: int, buffer: BytesIO, account: Student, template: ProjectTemplate):
-        # TODO change everythin to account object
-        domain_name = f'{project_name}.{account.account.login}'
-        image = await docker_repo.build_student_project(template.dockerfile, buffer, tag=domain_name)
-        middleware_name = await traefik_repo.add_student_service(service_name)
-        await docker_repo.create_serverless_service(service_name,  middleware=middleware_name, image=image, domain=domain_name)
-        queue = queue_var.get()
-        await queue.put('Сервис создан')
-        account.logical_used += filesize
-        project_url = f'http://{domain_name}.{app_settings.domain}'
+        template = await session.get(ProjectImage, template_id)
+        if not template:
+            raise NotFound(detail='Template not found')
 
+        service_name = f'{account.login}_{project_name.root}'
+        if await docker_repo.is_service_name_exists(service_name):
+            raise NotFound(detail='Project exists')
+
+        project_url = await self._build_project(project_name.root, service_name, buffer, account, template)
+        project = await project_service._create_project(project_name.root, session, project_url, filesize, account, template)
+        return project
+
+    async def _create_project(self, project_name: str, session: AsyncSession, project_url: str, filesize: int, account: Account, template: ProjectImage):
         project = Project(
             name=project_name, byte_size=filesize, project_url=project_url)
         project.account = account
-        project.project_template = template
+        project.project_image = template
         session.add(project)
         await session.commit()
 
-        return project_url, project
+        return project
+
+    async def _build_project(self, project_name: str, service_name: str, buffer, account, template):
+        domain_name = f'{project_name}.{account.login}'
+        image = await docker_repo.build_project(template.dockerfile, buffer, tag=domain_name)
+        middleware_name = await traefik_repo.add_service(service_name)
+        await docker_repo.create_serverless_service(service_name,  middleware=middleware_name, image=image, domain=domain_name)
+        queue = queue_var.get()
+        await queue.put('Сервис создан')
+        project_url = f'http://{domain_name}.{app_settings.domain}'
+        return project_url
 
 
 project_service = ProjectService()

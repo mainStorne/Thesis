@@ -1,6 +1,9 @@
+from sqlalchemy.orm import joinedload
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 from structlog import get_logger
 
-from src.api.db.users import Student
+from src.api.db.users import Account, Student
 from src.api.repos.account_repo import account_repo
 
 log = get_logger()
@@ -13,55 +16,11 @@ class UsersRepo:
         session.add(student)
         await session.commit()
 
-    async def get_student_by_token(self, token: str) -> Student:
-        pass
-
-    # async def create_user(self, user: CreateUserRequest.Student | CreateUserRequest.Teacher):
-    #     if isinstance(user, CreateUserRequest.Teacher):
-    #         raise
-    #     else:
-    #         plain_password = user.profile.account.password
-    #         login = user.profile.account.login
-    #         await self._quota_repo.create_student_to_filesystem(login)
-
-    #         try:
-    #             await self._quota_repo.set_quota(login, user.resource_limit)
-    #         except QuotaError:
-    #             await self._quota_repo.delete_student_from_filesystem(login)
-    #             raise
-
-    #         try:
-    #             await self._quota_repo.register_student_to_mysql(login, plain_password)
-    #         except QuotaError:
-    #             await self._quota_repo.delete_student_from_filesystem(login)
-    #             raise
-
-    #         try:
-    #             student = user
-    #             student.profile.account.password = self._account_repo.hash_password(user.profile.account.password)
-
-    #             account = Account(login=student.profile.account.login, hashed_password=student.profile.account.password)
-    #             student = Student(
-    #                 first_name=student.profile.first_name,
-    #                 middle_name=student.profile.middle_name,
-    #                 last_name=student.profile.last_name,
-    #                 group_id=student.group_id,
-    #                 resource_limit=student.resource_limit,
-    #             )
-    #             student.account = account
-    #             login = account.login
-    #             await self._quota_repo.create_student(student)
-    #         except SQLAlchemyError as e:
-    #             await self._quota_repo.delete_student_from_filesystem(login)
-    #             await self._quota_repo.unregister_student_from_mysql(login)
-    #             raise QuotaError from e
-    #         except Exception as e:
-    #             await log.aerror("Unexpected error in create_user!", exc_info=e)
-    #             await self._quota_repo.delete_student_from_filesystem(login)
-    #             await self._quota_repo.unregister_student_from_mysql(login)
-    #             raise
-
-    #         return student.id, self._security_repo.generate_token(account)
+    async def get_user_by_token(self, session: AsyncSession, token: str) -> Account | None:
+        payload = account_repo.decode_token(token)
+        stmt = select(Account).where(Account.id == payload.id).options(
+            joinedload(Account.student), joinedload(Account.teacher))
+        return (await session.exec(stmt)).one_or_none()
 
 
 users_repo = UsersRepo()

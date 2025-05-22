@@ -6,7 +6,7 @@ import yaml
 
 class TraefikRepo:
 
-    async def add_student_service(self, service_name: str) -> str:
+    async def add_service(self, service_name: str) -> str:
         loop = asyncio.get_running_loop()
         with ThreadPoolExecutor(1) as pool:
             return await loop.run_in_executor(

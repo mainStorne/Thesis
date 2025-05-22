@@ -10,6 +10,13 @@ if TYPE_CHECKING:
     from .resource import MysqlAccount, Project
 
 
+class UserMixin:
+
+    @property
+    def fio(self) -> str:
+        return f'{self.last_name.capitalize()} {self.first_name[0].upper()}.{f" {self.middle_name[0].upper()}." if self.middle_name else ''}'
+
+
 class Account(UUIDMixin, SQLModel, table=True):
     __tablename__ = "accounts"
     login: str = Field(sa_type=String(80), unique=True)
@@ -21,12 +28,13 @@ class Account(UUIDMixin, SQLModel, table=True):
     )
     is_stuff: bool = False
     student: Union["Student", None] = Relationship(back_populates="account")
+    teacher: Union["Teacher", None] = Relationship(back_populates="account")
     projects: list['Project'] = Relationship(back_populates='account')
     mysql_accounts: list['MysqlAccount'] = Relationship(
         back_populates='account')
 
 
-class Student(UUIDMixin, SQLModel, table=True):
+class Student(UUIDMixin, UserMixin, SQLModel, table=True):
     __tablename__ = "students"
     first_name: str = Field(sa_type=String(256))
     middle_name: str | None = Field(sa_type=String(256), nullable=True)
@@ -40,12 +48,14 @@ class Student(UUIDMixin, SQLModel, table=True):
     group: 'Group' = Relationship(back_populates='students')
 
 
-class Teacher(UUIDMixin, SQLModel, table=True):
+class Teacher(UUIDMixin, UserMixin, SQLModel, table=True):
 
     account_id: UUID = Field(foreign_key="accounts.id")
     first_name: str = Field(sa_type=String(256))
     middle_name: str | None = Field(sa_type=String(256), nullable=True)
     last_name: str = Field(sa_type=String(256))
+    account: Union["Account", None] = Relationship(
+        back_populates="teacher")
 
 
 class Group(UUIDMixin, SQLModel, table=True):
