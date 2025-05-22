@@ -5,6 +5,12 @@ from aiodocker import Docker
 from src.api.repos.archive_repo import archive_repo
 from src.conf import app_settings, queue_var
 
+from .base import RepoError
+
+
+class DockerRepoError(RepoError):
+    ...
+
 
 class DockerRepo:
     def __init__(self):
@@ -25,9 +31,13 @@ class DockerRepo:
         )
 
     async def delete_service(self, name: str):
-        pass
+        await self._delete_image_from_registry(name)
+        await self._docker_client.services.delete(
+            name
+        )
 
     async def _delete_image_from_registry(self, name: str):
+        # TODO
         ...
 
     async def create_service(self, name: str, labels: dict[str, str], task_template: dict):
@@ -67,6 +77,10 @@ class DockerRepo:
             fileobj=tar, encoding="gzip", tag=tag, stream=True
         ):
             message = content.get('stream', None)
+            error = content.get('errorDetail', None)
+            if error:
+                queue.put(message)
+                raise DockerRepoError
             if message is None:
                 continue
             await queue.put(message)

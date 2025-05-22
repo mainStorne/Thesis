@@ -13,7 +13,7 @@ class RepoError(Exception):
 class BaseSQLRepo[SQLModel]:
     __root__: SQLModel
 
-    async def create(self, session: AsyncSession, instance: SQLModel):
+    async def create_database(self, session: AsyncSession, instance: SQLModel):
         session.add(instance)
         await session.commit()
 
@@ -27,5 +27,5 @@ class BaseSQLRepo[SQLModel]:
 class IIntegration(ABC):
 
     @abstractmethod
-    async def on_create_project(self, student_project: Project):
+    async def create_user_account(self, student_project: Project):
         pass

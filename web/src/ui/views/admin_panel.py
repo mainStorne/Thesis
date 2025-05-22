@@ -3,6 +3,7 @@ import flet_easy as fs
 from structlog import get_logger
 
 from src.api.db.users import Account, Student
+from src.api.repos.mysql_repo import mysql_repo
 from src.api.repos.users_repo import users_repo
 from src.conf import database
 from src.ui.components.btn import ThesisButton
@@ -11,10 +12,10 @@ from src.ui.components.panel import ThesisPanel
 from src.ui.layouts.base import CenteredLayout
 
 log = get_logger()
-r = fs.AddPagesy(route_prefix="/admin-panel")
+r = fs.AddPagesy(route_prefix="/users")
 
 
-@r.page(route="", title="Админ панель", protected_route=True)
+@r.page(route="/create", protected_route=True)
 async def create_user(data: fs.Datasy):
     login = ft.Ref()
     first_name = ft.Ref[ft.TextField]()
@@ -39,6 +40,7 @@ async def create_user(data: fs.Datasy):
         async with database.session_maker() as session:
             try:
                 await users_repo.create_student(session, student)
+                await mysql_repo.create_user_account(student.account)
             except Exception as e:
                 await log.awarning('Error in create student', exc_info=e)
                 login.current.error_text = "Ошибка повторите позже"

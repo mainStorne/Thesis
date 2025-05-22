@@ -19,14 +19,6 @@ class ProjectImage(UUIDMixin, SQLModel, table=True):
     # ram
 
 
-class MysqlAccount(UUIDMixin, SQLModel, table=True):
-    __tablename__ = 'mysql_accounts'
-    login: str = Field(sa_type=String(30))
-    password: str = Field(sa_type=String(30))
-    account: 'Account' = Relationship(back_populates='mysql_accounts')
-    account_id: UUID = Field(foreign_key='accounts.id')
-
-
 class Project(UUIDMixin, DateMixin, SQLModel, table=True):
     __tablename__ = "projects"
     project_image_id: UUID = Field(foreign_key="project_images.id")

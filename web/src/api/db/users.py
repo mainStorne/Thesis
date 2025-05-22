@@ -7,7 +7,7 @@ from sqlmodel import DateTime, Field, Relationship, SQLModel, String, text
 from src.api.db.mixins import UUIDMixin
 
 if TYPE_CHECKING:
-    from .resource import MysqlAccount, Project
+    from .resource import Project
 
 
 class UserMixin:
@@ -30,8 +30,6 @@ class Account(UUIDMixin, SQLModel, table=True):
     student: Union["Student", None] = Relationship(back_populates="account")
     teacher: Union["Teacher", None] = Relationship(back_populates="account")
     projects: list['Project'] = Relationship(back_populates='account')
-    mysql_accounts: list['MysqlAccount'] = Relationship(
-        back_populates='account')
 
 
 class Student(UUIDMixin, UserMixin, SQLModel, table=True):

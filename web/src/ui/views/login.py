@@ -54,5 +54,6 @@ async def login(data: fs.Datasy):
                 ],
                 spacing=10,
             ),
+            width=400, height=400
         )
     )

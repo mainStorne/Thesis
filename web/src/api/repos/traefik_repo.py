@@ -28,5 +28,9 @@ class TraefikRepo:
             yaml.dump(config, file)
         return f'{service_name}@file'
 
+    async def delete_service(self, service_name: str) -> str:
+        # TODO
+        pass
+
 
 traefik_repo = TraefikRepo()

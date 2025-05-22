@@ -35,7 +35,7 @@ class ResourceService:
                                              }
                                          })
 
-        await mysql_repo.create(session, name)
+        await mysql_repo.create_database(session, name)
 
 
 resource_service = ResourceService()

@@ -1,9 +1,12 @@
 
 import flet as ft
 
+from src.api.db.users import Account
+from src.api.repos.mysql_repo import mysql_repo
 from src.api.repos.users_repo import users_repo
-from src.conf import database
+from src.conf import database, log
 from src.ui.components.field import ThesisText
+from src.ui.components.toast_component import ErrorToast, SuccessToast
 
 from .base import BaseLayout
 
@@ -13,9 +16,26 @@ class ThesisLayout(BaseLayout):
     def on_nav_rail_change(self, e):
         index = int(e.control.selected_index)
         if index == 0:
-            self.data.page.go('/users/me/projects')
+            self.data.page.go('/users/me/projects/create')
         elif index == 1:
+            self.data.page.go('/users/me/projects')
+        elif index == 2:
             self.data.page.go('/images')
+        elif index == 3:
+            self.data.page.go('/images/create')
+
+    def _create_mysql(self, account: Account):
+
+        async def wrapped(e):
+            try:
+                await mysql_repo.create_database(account)
+            except Exception as e:
+                await log.aexception('exc', exc_info=e)
+                self.data.page.open(ErrorToast("Ошибка попробуйте позже!"))
+            else:
+                self.data.page.open(SuccessToast("База данных была создана!"))
+
+        return wrapped
 
     async def build(self, control):
         token = await self.data.page.client_storage.get_async("token")
@@ -30,13 +50,19 @@ class ThesisLayout(BaseLayout):
 
             min_extended_width=400,
             leading=ft.FloatingActionButton(
-                icon=ft.Icons.CREATE, text="Создать", on_click=lambda _: self.data.page.go('/users/me/projects/create')
+                icon=ft.Icons.CREATE, text="Mysql", on_click=self._create_mysql(user)
             ),
             group_alignment=-0.9,
             destinations=[
                 ft.NavigationRailDestination(
                     icon=ft.Icon(
-                        ft.Icons.BOOKMARK) if self.data.page.route == '/users/me/projects' else ft.Icons.BOOK,
+                        ft.Icons.BOOKMARK) if self.data.page.route == '/users/me/projects/create' else ft.Icons.BOOK,
+                    label_content=ThesisText(value="Создать Проект"),
+                ),
+                ft.NavigationRailDestination(
+                    icon=ft.Icon(
+                        ft.Icons.LIST) if self.data.page.route == '/users/me/projects' else ft.Icons.LIST,
+
                     label_content=ThesisText(value="Проекты"),
                 ),
             ],
@@ -51,6 +77,13 @@ class ThesisLayout(BaseLayout):
                     icon=ft.Icon(
                         ft.Icons.INBOX_SHARP) if self.data.page.route == '/images' else ft.Icons.INBOX_SHARP,
                     label_content=ThesisText(value="Образы")
+                ),
+            )
+            rail.destinations.append(
+                ft.NavigationRailDestination(
+                    icon=ft.Icon(
+                        ft.Icons.ADD_BOX) if self.data.page.route == '/images/create' else ft.Icons.ADD_BOX,
+                    label_content=ThesisText(value="Создать Образ")
                 ),
             )
         else:

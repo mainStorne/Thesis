@@ -1,12 +1,13 @@
 from io import BytesIO
 from uuid import UUID
 
+from aiodocker import DockerError
 from sqlalchemy.orm import contains_eager, joinedload
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.api.db.resource import MysqlAccount, Project, ProjectImage
-from src.api.db.users import Account
+from src.api.db.resource import Project, ProjectImage
+from src.api.db.users import Account, Student
 from src.api.repos.account_repo import account_repo
 from src.api.repos.base import BaseSQLRepo
 from src.api.repos.docker_repo import docker_repo
@@ -28,8 +29,22 @@ class ProjectService(BaseSQLRepo):
 
         return await session.exec(stmt)
 
-    async def delete_project(self, project_name: str):
-        pass
+    async def delete_student_project(self, session: AsyncSession, student: Student, project: Project):
+        async with session.begin():
+            await self.delete_project(session, student.account, project)
+            student.logical_limit -= project.byte_size
+            session.add(student)
+
+    async def delete_project(self, session: AsyncSession, account: Account, project: Project):
+        service_name = self.get_service_name(account, project.name)
+        try:
+            await docker_repo.delete_service(service_name)
+        except DockerError as e:
+            if e.status != 404:
+                raise
+        await traefik_repo.delete_service(service_name)
+        await session.delete(project)
+        await session.commit()
 
     async def get_project_images(self, session: AsyncSession) -> list[ProjectImage]:
         return await session.exec(select(ProjectImage))
@@ -37,17 +52,17 @@ class ProjectService(BaseSQLRepo):
     async def get_by_id(self, session, id: UUID) -> Project | None:
         return (await session.exec(select(Project).where(Project.id == str(id)).options(joinedload(Project.project_image)))).one_or_none()
 
-    async def get_integrations(self, session: AsyncSession):
-        await session.exec(select(MysqlAccount))
+    def get_service_name(self, account: Account, project_name: str) -> str:
+        return f'{account.login}_{project_name}'
 
-    async def create_student_project(
+    async def create_project(
             self, project_name: DomainLikeName, account: Account, buffer: BytesIO, session: AsyncSession, template_id: UUID, filesize: int) -> Project:
 
         template = await session.get(ProjectImage, template_id)
         if not template:
             raise NotFound(detail='Template not found')
 
-        service_name = f'{account.login}_{project_name.root}'
+        service_name = self.get_service_name(account, project_name.root)
         if await docker_repo.is_service_name_exists(service_name):
             raise NotFound(detail='Project exists')
 

@@ -22,6 +22,17 @@ http:
           group: 7isp
           sablierUrl: http://sablier:10000
           sessionDuration: 2h
+    dima2_fdafsdfsa:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_fdafsdfsa
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_fdafsdfsa
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
     dima2_fdasfsa:
       plugin:
         sablier:
@@ -31,6 +42,72 @@ http:
             showDetails: 'true'
             theme: hacker-terminal
           names: dima2_fdasfsa
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_first:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_first
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_first
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_php:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_php
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_php
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_phpfsd:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_phpfsd
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_phpfsd
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_phpj:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_phpj
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_phpj
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_phpjf:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_phpjf
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_phpjf
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima2_test:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima2_test
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima2_test
           sablierUrl: http://sablier:10000
           sessionDuration: 2h
     dima_da9:

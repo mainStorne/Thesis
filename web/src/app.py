@@ -1,9 +1,7 @@
 import flet as ft
 import flet_easy as fs
 
-from src.ui.views import admin_panel, login
-from src.ui.views.users import user_projects
-from src.ui.views import project, images
+from src.ui.views import admin_panel, images, login, project, user_projects
 
 
 class App:

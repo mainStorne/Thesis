@@ -26,6 +26,9 @@ class ArchiveRepo(IArchiveRepo):
             with ZipFile(buffer) as zipped:
                 zipped.extractall(tempdir)  # noqa: S202
 
+            # FIX method of creating tar archive because temp dir also included!
+            # now this look like tmp/hash/user-dir, I need to remove /tmp/hash from there
+            # and add .dockerignore file to ingore Dockerfile in image!
             f = tempfile.NamedTemporaryFile()  # noqa: SIM115
             t = tarfile.open(mode="w:gz", fileobj=f)  # noqa: SIM115
             t.add(tempdir)

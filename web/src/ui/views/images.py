@@ -8,6 +8,7 @@ from src.conf import database
 from src.ui.components.field import ThesisText, ThesisTextField
 from src.ui.components.list_component import ListComponent
 from src.ui.components.panel import ThesisPanel
+from src.ui.components.toast_component import ErrorToast, SuccessToast
 from src.ui.layouts.layout import ThesisLayout
 
 r = fs.AddPagesy(route_prefix='/images')
@@ -27,8 +28,9 @@ async def my_projects(data: fs.Datasy):
         )
 
     return await ThesisLayout(data).build(
-        ft.Container(ft.Container(
-            list_component, expand=True, padding=20, bgcolor=ft.Colors.WHITE, border_radius=ft.border_radius.all(10)), margin=15, expand=True)
+        ThesisPanel(
+            content=list_component
+        )
     )
 
 
@@ -38,9 +40,14 @@ async def create_project_image(data: fs.Datasy):
     project_image_name = ft.Ref[ft.Text]()
 
     async def create_project_image(e):
-        async with database.session_maker() as session:
-            await project_image_service.create(session, ProjectImage(name=project_image_name.current.value,
-                                                                     dockerfile=dockerfile_definition.current.value))
+        try:
+            async with database.session_maker() as session:
+                await project_image_service.create_database(session, ProjectImage(name=project_image_name.current.value,
+                                                                                  dockerfile=dockerfile_definition.current.value))
+        except Exception:
+            data.page.open(ErrorToast("Ошибка попробуйте позже!"))
+        else:
+            data.page.open(SuccessToast("Образ создан!"))
 
     return await ThesisLayout(data).build(
         ft.Container(ft.Container(
