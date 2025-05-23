@@ -22,22 +22,36 @@ class ArchiveRepo(IArchiveRepo):
     def _create_tar(self, dockerfile: str, buffer: BytesIO):
         dockerfile = BytesIO(dockerfile.encode())
 
-        with tempfile.TemporaryDirectory() as tempdir:
-            with ZipFile(buffer) as zipped:
-                zipped.extractall(tempdir)  # noqa: S202
+        f = tempfile.NamedTemporaryFile()
+        t = tarfile.open(mode="w:gz", fileobj=f)
+        with ZipFile(buffer) as zipped:
+            for zipinfo in zipped.infolist():
 
-            # FIX method of creating tar archive because temp dir also included!
-            # now this look like tmp/hash/user-dir, I need to remove /tmp/hash from there
-            # and add .dockerignore file to ingore Dockerfile in image!
-            f = tempfile.NamedTemporaryFile()  # noqa: SIM115
-            t = tarfile.open(mode="w:gz", fileobj=f)  # noqa: SIM115
-            t.add(tempdir)
+                tarinfo = tarfile.TarInfo()
+                tarinfo.name = zipinfo.filename
+                tarinfo.size = zipinfo.file_size
+                if zipinfo.is_dir():
+
+                    tarinfo.mode = 0o777
+                    tarinfo.type = tarfile.DIRTYPE
+                else:
+                    tarinfo.mode = 0o666
+                    tarinfo.type = tarfile.REGTYPE
+                infile = zipped.open(zipinfo)
+                t.addfile(tarinfo, infile)
 
         buffer.close()
         dfinfo = tarfile.TarInfo("Dockerfile")
         dfinfo.size = len(dockerfile.getvalue())
         dockerfile.seek(0)
         t.addfile(dfinfo, dockerfile)
+
+        dfinfo = tarfile.TarInfo(".dockerignore")
+        dockerignore = BytesIO(b"""Dockerfile
+.dockerignore""")
+        dfinfo.size = len(dockerignore.getvalue())
+        dockerignore.seek(0)
+        t.addfile(dfinfo, dockerignore)
         t.close()
         f.seek(0)
         return f
