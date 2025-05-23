@@ -11,7 +11,8 @@ from src.ui.components.dropdown import ThesisDropdown
 from src.ui.components.field import ThesisText, ThesisTextField
 from src.ui.components.list_component import ListComponent
 from src.ui.components.panel import ThesisPanel
-from src.ui.components.upload_file import UploadProjectComponent
+from src.ui.components.toast_component import SuccessToast
+from src.ui.components.upload_file import UploadFileComponent
 from src.ui.depends import user
 from src.ui.layouts.layout import ThesisLayout
 
@@ -92,6 +93,8 @@ async def create_project(data: fs.Datasy, user: Account):
 
     @handle_error_text
     def handle_success(response: dict):
+        data.page.open(SuccessToast(
+            'Проект успешно загружен! Создаю проект...'))
         project_url = response['url']
         data.page.launch_url(project_url)
 
@@ -114,7 +117,7 @@ async def create_project(data: fs.Datasy, user: Account):
             case _:
                 status_text.current.value = 'Что-то пошло не так, попробуйте ещё раз'
 
-    upload_project_component = UploadProjectComponent(
+    upload_project_component = UploadFileComponent(
 
         data, on_result=on_result, on_500_server_error=handle_500_server_error, on_success=handle_success,
         on_error=handle_error)

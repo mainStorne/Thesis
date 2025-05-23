@@ -1,4 +1,4 @@
-from string import ascii_letters
+from string import ascii_letters, digits
 
 from pydantic import RootModel, field_validator
 
@@ -23,7 +23,7 @@ class DomainLikeName(RootModel):
     @classmethod
     def validate_domainlike(cls, v: str) -> str:
         for char in v:
-            if char not in ascii_letters:
+            if char not in ascii_letters + digits:
                 raise ValueError
 
         return v

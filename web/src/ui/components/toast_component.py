@@ -5,14 +5,14 @@ class SuccessToast(ft.SnackBar):
 
     def __init__(self, text: str):
         super().__init__(
-            ft.Text(text), bgcolor=ft.Colors.GREEN)
+            ft.Text(text, color=ft.Colors.WHITE), bgcolor=ft.Colors.GREEN)
 
 
 class ErrorToast(ft.SnackBar):
 
     def __init__(self, text: str):
         super().__init__(
-            ft.Text(text), bgcolor=ft.Colors.ERROR)
+            ft.Text(text, color=ft.Colors.WHITE), bgcolor=ft.Colors.ERROR)
 
 
 # def toaster(success: SuccessToast, success_text: str):

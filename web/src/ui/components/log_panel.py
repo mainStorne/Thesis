@@ -2,7 +2,7 @@
 import flet as ft
 
 
-class ThesisListPanel(ft.Container):
+class ThesisLogPanel(ft.Container):
 
     def __init__(self, **kwargs):
 

@@ -5,14 +5,14 @@ import flet as ft
 from src.conf import uploadfile_queue
 
 from .btn import ThesisButton
-from .log_panel import ThesisListPanel
+from .log_panel import ThesisLogPanel
 
 
 class ConsoleLogComponent:
 
     def __init__(self, data):
         self.data = data
-        self.list_panel = ThesisListPanel(width=500, )
+        self.list_panel = ThesisLogPanel(width=500, )
         self.console_log = ft.AlertDialog(
             title=ft.Text("Сборка проекта"),
             content=self.list_panel,

@@ -1,12 +1,15 @@
-from uuid import UUID
+
+import asyncio
 
 import flet as ft
 import flet_easy as fs
 
 from src.api.db.users import Account
+from src.api.repos.docker_repo import docker_repo
 from src.api.services.project_service import project_service
 from src.conf import database, log
 from src.ui.components.field import ThesisText
+from src.ui.components.log_panel import ThesisLogPanel
 from src.ui.components.panel import ThesisPanel
 from src.ui.components.toast_component import ErrorToast, SuccessToast
 from src.ui.depends import user
@@ -18,7 +21,7 @@ r = fs.AddPagesy(route_prefix='/projects')
 
 @r.page(route='/{id}', protected_route=True)
 @user
-async def project(data: fs.Datasy, id: UUID, user: Account):
+async def project(data: fs.Datasy, id: str, user: Account):
     id = is_uuid(id)
     if not id:
         return data.page.go('/not-found')
@@ -26,6 +29,7 @@ async def project(data: fs.Datasy, id: UUID, user: Account):
         project = await project_service.get_by_id(session, id)
     if not project:
         return data.page.go('/not-found')
+    log_panel_component = ThesisLogPanel(expand=True)
 
     async def delete_project(e):
         try:
@@ -43,6 +47,12 @@ async def project(data: fs.Datasy, id: UUID, user: Account):
         finally:
             data.page.close(confirm_deleting)
 
+    async def stream_logs():
+        await asyncio.sleep(0.2)
+        service_name = project_service.get_service_name(user, project.name)
+        async for record in docker_repo.stream_service_log(service_name):
+            log_panel_component.add_message(record)
+
     confirm_deleting = ft.AlertDialog(
         modal=True,
         title=ft.Text(value=f'Удалить проект {project.name}?'),
@@ -51,8 +61,9 @@ async def project(data: fs.Datasy, id: UUID, user: Account):
             ft.TextButton(
                 'Нет', on_click=lambda _: data.page.close(confirm_deleting)),
         ]
-
     )
+    data.page.run_task(stream_logs)
+
     return await ThesisLayout(data).build(
         ThesisPanel(content=ft.Column([
             ft.Row([
@@ -67,9 +78,13 @@ async def project(data: fs.Datasy, id: UUID, user: Account):
                 ft.Row(
                     [ThesisText(value=f'Размер проекта: {project.byte_size}')]),
                 ft.Row(
-                    [ft.Container(ThesisText(value=f'URL: {project.project_url}', selectable=True), on_click=data.page.launch_url(project.project_url))]),
+                    [ft.Container(ThesisText(value=f'URL: {project.project_url}', selectable=True), on_click=lambda e: data.page.launch_url(project.project_url))]),
                 ft.Row(
                     [ThesisText(value=f'Базовый Образ: {project.project_image.name}')]),
             ],),
+            ft.Container(ft.Column([log_panel_component], scroll=True), expand=True,
+                         border=ft.border.all(1, ft.Colors.WHITE38),
+                         border_radius=ft.border_radius.all(15),
+                         padding=10,),
         ],  spacing=20), width=None, height=None)
     )

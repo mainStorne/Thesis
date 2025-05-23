@@ -40,6 +40,15 @@ class DockerRepo:
         # TODO
         ...
 
+    def stream_service_log(self, service_name: str):
+        return self._docker_client.services.logs(
+            service_name,
+            stderr=True,
+            stdout=True,
+            timestamps=True,
+            follow=True
+        )
+
     async def create_service(self, name: str, labels: dict[str, str], task_template: dict):
         return await self._docker_client.services.create(
             task_template=task_template,

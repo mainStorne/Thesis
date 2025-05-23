@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import quota_pb2 as quota__pb2
+from . import quota_pb2 as quota__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
@@ -11,7 +11,8 @@ _version_not_supported = False
 
 try:
     from grpc._utilities import first_version_is_lower
-    _version_not_supported = first_version_is_lower(GRPC_VERSION, GRPC_GENERATED_VERSION)
+    _version_not_supported = first_version_is_lower(
+        GRPC_VERSION, GRPC_GENERATED_VERSION)
 except ImportError:
     _version_not_supported = True
 
@@ -35,10 +36,10 @@ class QuotaStub(object):
             channel: A grpc.Channel.
         """
         self.GetUserQuota = channel.unary_unary(
-                '/quota.Quota/GetUserQuota',
-                request_serializer=quota__pb2.GetUserQuotaRequest.SerializeToString,
-                response_deserializer=quota__pb2.GetUserQuotaResponse.FromString,
-                _registered_method=True)
+            '/quota.Quota/GetUserQuota',
+            request_serializer=quota__pb2.GetUserQuotaRequest.SerializeToString,
+            response_deserializer=quota__pb2.GetUserQuotaResponse.FromString,
+            _registered_method=True)
 
 
 class QuotaServicer(object):
@@ -53,33 +54,34 @@ class QuotaServicer(object):
 
 def add_QuotaServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetUserQuota': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetUserQuota,
-                    request_deserializer=quota__pb2.GetUserQuotaRequest.FromString,
-                    response_serializer=quota__pb2.GetUserQuotaResponse.SerializeToString,
-            ),
+        'GetUserQuota': grpc.unary_unary_rpc_method_handler(
+            servicer.GetUserQuota,
+            request_deserializer=quota__pb2.GetUserQuotaRequest.FromString,
+            response_serializer=quota__pb2.GetUserQuotaResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'quota.Quota', rpc_method_handlers)
+        'quota.Quota', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
     server.add_registered_method_handlers('quota.Quota', rpc_method_handlers)
 
-
  # This class is part of an EXPERIMENTAL API.
+
+
 class Quota(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def GetUserQuota(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                     target,
+                     options=(),
+                     channel_credentials=None,
+                     call_credentials=None,
+                     insecure=False,
+                     compression=None,
+                     wait_for_ready=None,
+                     timeout=None,
+                     metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
@@ -107,15 +109,15 @@ class ResourcesStub(object):
             channel: A grpc.Channel.
         """
         self.CreateSharedResource = channel.unary_unary(
-                '/quota.Resources/CreateSharedResource',
-                request_serializer=quota__pb2.CreateSharedResourceRequest.SerializeToString,
-                response_deserializer=quota__pb2.CreateSharedResourceResponse.FromString,
-                _registered_method=True)
+            '/quota.Resources/CreateSharedResource',
+            request_serializer=quota__pb2.CreateSharedResourceRequest.SerializeToString,
+            response_deserializer=quota__pb2.CreateSharedResourceResponse.FromString,
+            _registered_method=True)
         self.UploadStudentResource = channel.stream_unary(
-                '/quota.Resources/UploadStudentResource',
-                request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
-                response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
-                _registered_method=True)
+            '/quota.Resources/UploadStudentResource',
+            request_serializer=quota__pb2.UploadUserAppRequest.SerializeToString,
+            response_deserializer=quota__pb2.UploadUserAppResponse.FromString,
+            _registered_method=True)
 
 
 class ResourcesServicer(object):
@@ -138,38 +140,40 @@ class ResourcesServicer(object):
 
 def add_ResourcesServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'CreateSharedResource': grpc.unary_unary_rpc_method_handler(
-                    servicer.CreateSharedResource,
-                    request_deserializer=quota__pb2.CreateSharedResourceRequest.FromString,
-                    response_serializer=quota__pb2.CreateSharedResourceResponse.SerializeToString,
-            ),
-            'UploadStudentResource': grpc.stream_unary_rpc_method_handler(
-                    servicer.UploadStudentResource,
-                    request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
-                    response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
-            ),
+        'CreateSharedResource': grpc.unary_unary_rpc_method_handler(
+            servicer.CreateSharedResource,
+            request_deserializer=quota__pb2.CreateSharedResourceRequest.FromString,
+            response_serializer=quota__pb2.CreateSharedResourceResponse.SerializeToString,
+        ),
+        'UploadStudentResource': grpc.stream_unary_rpc_method_handler(
+            servicer.UploadStudentResource,
+            request_deserializer=quota__pb2.UploadUserAppRequest.FromString,
+            response_serializer=quota__pb2.UploadUserAppResponse.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'quota.Resources', rpc_method_handlers)
+        'quota.Resources', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('quota.Resources', rpc_method_handlers)
-
+    server.add_registered_method_handlers(
+        'quota.Resources', rpc_method_handlers)
 
  # This class is part of an EXPERIMENTAL API.
+
+
 class Resources(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def CreateSharedResource(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                             target,
+                             options=(),
+                             channel_credentials=None,
+                             call_credentials=None,
+                             insecure=False,
+                             compression=None,
+                             wait_for_ready=None,
+                             timeout=None,
+                             metadata=None):
         return grpc.experimental.unary_unary(
             request,
             target,
@@ -188,15 +192,15 @@ class Resources(object):
 
     @staticmethod
     def UploadStudentResource(request_iterator,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
+                              target,
+                              options=(),
+                              channel_credentials=None,
+                              call_credentials=None,
+                              insecure=False,
+                              compression=None,
+                              wait_for_ready=None,
+                              timeout=None,
+                              metadata=None):
         return grpc.experimental.stream_unary(
             request_iterator,
             target,
@@ -237,12 +241,13 @@ def add_SystemServicer_to_server(servicer, server):
     rpc_method_handlers = {
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'quota.System', rpc_method_handlers)
+        'quota.System', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
     server.add_registered_method_handlers('quota.System', rpc_method_handlers)
 
-
  # This class is part of an EXPERIMENTAL API.
+
+
 class System(object):
     """get system available space and so on
     rpc GetSystemSpace()
