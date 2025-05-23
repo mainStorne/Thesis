@@ -231,6 +231,28 @@ http:
           names: dima_php3
           sablierUrl: http://sablier:10000
           sessionDuration: 2h
+    dima_php4:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima_php4
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima_php4
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dima_php5:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dima_php5
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dima_php5
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
     dima_rewrwq:
       plugin:
         sablier:

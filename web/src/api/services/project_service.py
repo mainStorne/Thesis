@@ -7,7 +7,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.db.resource import Project, ProjectImage
-from src.api.db.users import Account, Student
+from src.api.db.users import Account
 from src.api.repos.account_repo import account_repo
 from src.api.repos.base import BaseSQLRepo
 from src.api.repos.docker_repo import docker_repo
@@ -29,11 +29,11 @@ class ProjectService(BaseSQLRepo):
 
         return await session.exec(stmt)
 
-    async def delete_student_project(self, session: AsyncSession, student: Student, project: Project):
-        async with session.begin():
-            await self.delete_project(session, student.account, project)
-            student.logical_limit -= project.byte_size
-            session.add(student)
+    async def delete_student_project(self, session: AsyncSession, account: Account, project: Project):
+        await self.delete_project(session,  account, project)
+        account.student.logical_limit -= project.byte_size
+        session.add(account.student)
+        await session.commit()
 
     async def delete_project(self, session: AsyncSession, account: Account, project: Project):
         service_name = self.get_service_name(account, project.name)
@@ -54,6 +54,15 @@ class ProjectService(BaseSQLRepo):
 
     def get_service_name(self, account: Account, project_name: str) -> str:
         return f'{account.login}_{project_name}'
+
+    async def update_project(self, project: Project, account: Account, buffer: BytesIO):
+        domain_name = f'{project.name}.{account.login}'
+        service_name = self.get_service_name(account, project.name)
+        await docker_repo.delete_service(service_name)
+        image = await docker_repo.build_project(project.project_image.dockerfile, buffer, tag=domain_name)
+        await docker_repo.create_serverless_service(service_name,  middleware=f"{service_name}@file", image=image, domain=domain_name)
+        queue = queue_var.get()
+        await queue.put('Сервис обновлен')
 
     async def create_project(
             self, project_name: DomainLikeName, account: Account, buffer: BytesIO, session: AsyncSession, template_id: UUID, filesize: int) -> Project:

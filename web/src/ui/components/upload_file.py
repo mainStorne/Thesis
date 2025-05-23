@@ -28,7 +28,7 @@ class UploadFileComponent:
 
     def _handle_result(self, on_result):
         @on_result
-        def wrapped(upload_url: str):
+        def wrapped(upload_url: str, method='POST'):
             if self.file_picker.result is None and self.file_picker.result.files is None:
                 return
 
@@ -37,7 +37,8 @@ class UploadFileComponent:
                 upload_list.append(
                     ft.FilePickerUploadFile(
                         f.name,
-                        upload_url
+                        upload_url,
+                        method=method
                     )
                 )
             self.file_picker.upload(upload_list)
@@ -75,7 +76,7 @@ class UploadFileComponent:
 
 class UploadProjectComponent:
 
-    def __init__(self, data, on_error: Callable[[str], Any], build_upload_hook: Callable[[], str]):
+    def __init__(self, data, on_error: Callable[[str, str], Any], build_upload_hook: Callable[[], str]):
         self.data = data
         self.on_error = on_error
         self.build_upload_hook = build_upload_hook
@@ -87,21 +88,18 @@ class UploadProjectComponent:
     def on_result(self, handler):
         def wrapped():
             self.console_log_component.log_btn.current.visible = False
-            upload_url = self.build_upload_hook()
-            # status_text.current.visible = False
-            # if not template_id:
-            #     return
-            # prefix_url = '/student' if user.student else '/teacher'
-            # upload_url = f"{prefix_url}/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}&queue_token={console_log_component.queue_token}"
-
-            handler(upload_url)
+            upload_url, method = self.build_upload_hook()
+            handler(upload_url +
+                    f'&queue_token={self.console_log_component.queue_token}', method)
             self.data.page.run_task(self.console_log_component.on_message)
             self.data.page.update()
 
         return wrapped
 
-    def handle_error_text(self, func):
+    @staticmethod
+    def handle_error_text(func):
         def wrapped(*args, **kwargs):
+            self = args[0]
             func(*args, **kwargs)
             # status_text.current.visible = True
             self.upload_project_component.upload_btn.current.disabled = False
@@ -139,3 +137,9 @@ class UploadProjectComponent:
                 msg = 'Что-то пошло не так, попробуйте ещё раз'
 
         self.on_error(msg)
+
+    def build(self):
+        return ft.Column([
+            self.upload_project_component.build(),
+            self.console_log_component.build(),
+        ])

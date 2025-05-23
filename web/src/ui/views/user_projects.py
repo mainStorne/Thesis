@@ -6,13 +6,11 @@ import flet_easy as fs
 from src.api.db.users import Account
 from src.api.services.project_service import project_service
 from src.conf import database
-from src.ui.components.console_log import ConsoleLogComponent
 from src.ui.components.dropdown import ThesisDropdown
 from src.ui.components.field import ThesisText, ThesisTextField
 from src.ui.components.list_component import ListComponent
 from src.ui.components.panel import ThesisPanel
-from src.ui.components.toast_component import SuccessToast
-from src.ui.components.upload_file import UploadFileComponent
+from src.ui.components.upload_file import UploadProjectComponent
 from src.ui.depends import user
 from src.ui.layouts.layout import ThesisLayout
 
@@ -63,65 +61,20 @@ async def create_project(data: fs.Datasy, user: Account):
     project_name = ft.Ref[ft.TextField]()
     template_id: None | UUID = None
 
-    def on_result(handler):
-        def wrapped():
-            status_text.current.visible = False
-            console_log_component.log_btn.current.visible = False
-            if not template_id:
-                return
-            prefix_url = '/student' if user.student else '/teacher'
-            upload_url = f"{prefix_url}/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}&queue_token={console_log_component.queue_token}"
+    def build_url_hook():
+        status_text.current.visible = False
+        if not template_id:
+            return
+        prefix_url = '/student' if user.student else '/teacher'
+        return f"{prefix_url}/upload?token={token}&project_name={project_name.current.value}&template_id={template_id}", 'POST'
 
-            handler(upload_url)
-            data.page.run_task(console_log_component.on_message)
-            data.page.update()
+    def on_error(error: str):
+        status_text.current.value = error
+        status_text.current.visible = True
+        data.page.update()
 
-        return wrapped
-
-    def handle_error_text(func):
-        def wrapped(*args, **kwargs):
-            func(*args, **kwargs)
-            status_text.current.visible = True
-            upload_project_component.upload_btn.current.disabled = False
-            data.page.update()
-
-        return wrapped
-
-    @handle_error_text
-    def handle_500_server_error():
-        status_text.current.value = 'Ошибка повторите позже'
-
-    @handle_error_text
-    def handle_success(response: dict):
-        data.page.open(SuccessToast(
-            'Проект успешно загружен! Создаю проект...'))
-        project_url = response['url']
-        data.page.launch_url(project_url)
-
-    @handle_error_text
-    def handle_error(status_code: int, detail: str):
-        match detail:
-            case 'Project exists':
-
-                status_text.current.value = 'Проект с таким же именем уже существует'
-            case 'Template not found':
-                status_text.current.value = 'Шаблон приложения не найден'
-            case 'Limit is full':
-                status_text.current.value = 'Вы исчерпали свою квоту! Не хватает места'
-            case 'File with no size':
-                status_text.current.value = 'Отправлен файл без размера'
-            case 'Zipfile errro':
-                status_text.current.value = 'Отправленный файл должен быть ZIP формата'
-            case 'Project name is wrong':
-                status_text.current.value = 'Имя дожно содержать только ASCII-символы'
-            case _:
-                status_text.current.value = 'Что-то пошло не так, попробуйте ещё раз'
-
-    upload_project_component = UploadFileComponent(
-
-        data, on_result=on_result, on_500_server_error=handle_500_server_error, on_success=handle_success,
-        on_error=handle_error)
-    console_log_component = ConsoleLogComponent(data)
+    upload_project_component = UploadProjectComponent(data, on_error=on_error,
+                                                      build_upload_hook=build_url_hook)
 
     def on_dropdown_change(e: ft.ControlEvent):
         nonlocal template_id
@@ -163,8 +116,7 @@ async def create_project(data: fs.Datasy, user: Account):
                             expand=True
 
                         ),
-                        upload_project_component.build(),
-                        console_log_component.build(),
+                        upload_project_component.build()
                     ],
                     spacing=10,
                 ),
