@@ -10,7 +10,7 @@ wheels/
 **/.venv
 .env
 .vscode
-
+settings.yml
 .coverage
 report.xml
 

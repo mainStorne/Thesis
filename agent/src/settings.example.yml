@@ -1,0 +1,3 @@
+quota:
+  students_shared_base_dir: /students
+  students_home_base_dir: /home
