@@ -1,7 +1,3 @@
 quota:
   students_shared_base_dir: /students
   students_home_base_dir: /home
-students_home_base_dir: /home
-students_shared_base_dir: /students
-max_file_size_in_bytes: 2147483648
-jwt_secret: secret

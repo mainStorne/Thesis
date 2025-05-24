@@ -5,7 +5,7 @@ database:
   db: api
   user: vFaWi722cKdlA8PeXuyAYoEYzEI
   password: iXaoOngwIegUlYVkpU9wc1It1FU
-  host: localhost
+  host: db
   port: 5432
 
 swarm:
@@ -14,6 +14,6 @@ swarm:
 domain: thesis.com
 mysql:
   password: vFaWi722cKdlA8PeXuyAYoEYzEI
-  host: 127.0.0.1
+  host: mysql
 
 jwt_secret: secret

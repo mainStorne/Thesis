@@ -83,17 +83,17 @@ cd Thesis
     - Вставьте содержимое Dockerfile образа
     - Создайте образ
 
-### 🔧 Конфигурация (web|agent/config.yaml)
+### 🔧 Конфигурация (web|agent/settings.yml)
 
 ```yaml
 quota:
   students_shared_base_dir: /students
   students_home_base_dir: /home
 database:
-  db: api
-  user: vFaWi722cKdlA8PeXuyAYoEYzEI
-  password: iXaoOngwIegUlYVkpU9wc1It1FU
-  host: localhost
+  db: serverless_hosting
+  user: admin
+  password: secure_password
+  host: db
   port: 5432
 
 swarm:
@@ -119,3 +119,10 @@ POSTGRES_DB=serverless_hosting
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=secure_password
 ```
+
+**Внимание** переменные которые вы поставите для базы данные необходимо продублировать в settings.yml для сервиса web
+
+### По умолчанию создается аккаунт администратора
+
+login: admin
+password: admin
