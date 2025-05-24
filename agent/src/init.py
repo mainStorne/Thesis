@@ -1,3 +1,4 @@
+import os
 from asyncio.subprocess import PIPE, create_subprocess_shell
 from pathlib import Path
 
@@ -7,6 +8,10 @@ log = get_logger()
 
 
 async def initialize():
+    # Use this hack to work in container
+    os.chroot('/host')
+    os.chdir('/')
+
     path = Path('/fs/shared')
     path.mkdir(exist_ok=True)
     students_group = 'students'

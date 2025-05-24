@@ -56,6 +56,22 @@ git clone https://github.com/mainStorne/Thesis.git
 cd Thesis
 ```
 
+2. **Выберите конфигурация для деплоя**:
+
+Существует две конфигурации:
+
+- Подходящая для [одного хоста](./docker-compose.prod.one-host.yaml)
+- Подходящая для [нескольких](./docker-compose.prod.yaml)
+
+3. **Запустите**
+
+```bash
+docker service create --name registry --publish published=5000,target=5000 registry:2
+docker compose -f ваш_yaml build agent web
+docker compose -f ваш_yaml push agent web
+docker stack deploy -c ваш_yaml thesis
+```
+
 ## 💻 Использование
 
 ### Для студентов

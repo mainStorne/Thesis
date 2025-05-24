@@ -22,7 +22,7 @@ class FilesystemRepo:
 
     async def create_resource(self, base_dir: str, username: str):
         proc = await create_subprocess_shell(
-            f"sudo useradd -mU -b {base_dir} -G students {username}",
+            f"useradd -mU -b {base_dir} -G students {username}",
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -37,7 +37,7 @@ class FilesystemRepo:
 
     async def create_user(self, username: str):
         proc = await create_subprocess_shell(
-            f"sudo useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {username}",
+            f"useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {username}",
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -52,7 +52,7 @@ class FilesystemRepo:
 
     async def delete_user(self, username: str):
         proc = await create_subprocess_shell(
-            f"sudo userdel -r {username}",
+            f"userdel -r {username}",
             stdout=PIPE,
             stderr=PIPE,
         )

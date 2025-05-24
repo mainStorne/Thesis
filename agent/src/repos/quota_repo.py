@@ -39,7 +39,7 @@ grant  all on {login}.* to '{login}'@'%';"
     async def set_quota(self, username: str, limit: str):
 
         proc = await create_subprocess_shell(
-            f"sudo setquota {username} {limit} {limit} 0 0 /fs",
+            f"setquota {username} {limit} {limit} 0 0 /fs",
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -54,7 +54,7 @@ grant  all on {login}.* to '{login}'@'%';"
 
     async def unregister_student_from_mysql(self, login: str):
         proc = await create_subprocess_shell(
-            f"""sudo docker exec mysql mysql --password={app_settings.mysql} --execute="drop user '{login}'@'%';
+            f"""  docker exec mysql mysql --password={app_settings.mysql} --execute="drop user '{login}'@'%';
 drop database {login};"
 """,
             stderr=PIPE,
@@ -73,7 +73,7 @@ drop database {login};"
 
     async def repquota(self):
         proc = await create_subprocess_shell(
-            "sudo repquota -O csv /fs", stderr=PIPE, stdout=PIPE
+            "  repquota -O csv /fs", stderr=PIPE, stdout=PIPE
         )
         stdout, stderr = await proc.communicate()
         if stderr:
@@ -84,7 +84,7 @@ drop database {login};"
 
     async def create_student_to_filesystem(self, username: str):
         proc = await create_subprocess_shell(
-            f"sudo useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {username}",
+            f"  useradd -mU -b {app_settings.quota.students_home_base_dir} -G students {username}",
             stdout=PIPE,
             stderr=PIPE,
         )
@@ -99,7 +99,7 @@ drop database {login};"
 
     async def delete_student_from_filesystem(self, username: str):
         proc = await create_subprocess_shell(
-            f"sudo userdel -r {username}",
+            f"  userdel -r {username}",
             stdout=PIPE,
             stderr=PIPE,
         )

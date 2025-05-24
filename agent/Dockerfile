@@ -27,5 +27,4 @@ FROM base AS runner
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
 ENV PORT=8080
 COPY src src
-
 CMD python -m src
