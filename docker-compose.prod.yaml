@@ -34,6 +34,7 @@ services:
     build:
       context: web
       dockerfile: Dockerfile
+    image: 127.0.0.1:5000/thesis.web
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
