@@ -27,7 +27,6 @@ COPY --from=builder ${VENV_PATH} ${VENV_PATH}
 WORKDIR /web
 COPY src src
 COPY assets assets
-COPY storage storage
 COPY alembic.sh .
 COPY alembic.ini .
 COPY main.py .
