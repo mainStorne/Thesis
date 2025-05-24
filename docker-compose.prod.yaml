@@ -12,6 +12,8 @@ services:
         constraints:
           - node.role==manager
 
+      replicas: 1
+
   sablier:
     image: sablierapp/sablier:1.9.0
     command:
@@ -29,12 +31,40 @@ services:
         constraints:
           - node.role==manager
 
+      replicas: 1
+
+  web:
+    build:
+      context: web
+      dockerfile: Dockerfile
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    cap_add:
+      - CAP_SYS_ADMIN
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role==manager
+      replicas: 1
+
+
+
   db:
     image: postgres:latest
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
       - .env
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+
+      replicas: 1
 
   agent:
     build:
