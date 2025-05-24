@@ -1,34 +1,12 @@
 http:
   middlewares:
-    6isp:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: 7ISP
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_vxcvxd
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    7isp:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: 7ISP
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          group: 7isp
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
     dima2_fdafsdfsa:
       plugin:
         sablier:
           dynamic:
             displayName: Starting dima2_fdafsdfsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_fdafsdfsa
           sablierUrl: http://sablier:10000
@@ -39,7 +17,7 @@ http:
           dynamic:
             displayName: Starting dima2_fdasfsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_fdasfsa
           sablierUrl: http://sablier:10000
@@ -50,7 +28,7 @@ http:
           dynamic:
             displayName: Starting dima2_first
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_first
           sablierUrl: http://sablier:10000
@@ -61,7 +39,7 @@ http:
           dynamic:
             displayName: Starting dima2_php
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_php
           sablierUrl: http://sablier:10000
@@ -72,7 +50,7 @@ http:
           dynamic:
             displayName: Starting dima2_phpfsd
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_phpfsd
           sablierUrl: http://sablier:10000
@@ -83,7 +61,7 @@ http:
           dynamic:
             displayName: Starting dima2_phpj
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_phpj
           sablierUrl: http://sablier:10000
@@ -94,7 +72,7 @@ http:
           dynamic:
             displayName: Starting dima2_phpjf
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_phpjf
           sablierUrl: http://sablier:10000
@@ -105,7 +83,7 @@ http:
           dynamic:
             displayName: Starting dima2_test
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima2_test
           sablierUrl: http://sablier:10000
@@ -116,7 +94,7 @@ http:
           dynamic:
             displayName: Starting dima_da9
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_da9
           sablierUrl: http://sablier:10000
@@ -127,7 +105,7 @@ http:
           dynamic:
             displayName: Starting dima_fdas
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdas
           sablierUrl: http://sablier:10000
@@ -138,7 +116,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsdfsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsdfsa
           sablierUrl: http://sablier:10000
@@ -149,7 +127,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsf
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsf
           sablierUrl: http://sablier:10000
@@ -160,7 +138,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsfa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsfa
           sablierUrl: http://sablier:10000
@@ -171,7 +149,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsfdafdsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsfdafdsa
           sablierUrl: http://sablier:10000
@@ -182,7 +160,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsfdsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsfdsa
           sablierUrl: http://sablier:10000
@@ -193,7 +171,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsfdsf
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsfdsf
           sablierUrl: http://sablier:10000
@@ -204,7 +182,7 @@ http:
           dynamic:
             displayName: Starting dima_fdsfsa
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_fdsfsa
           sablierUrl: http://sablier:10000
@@ -215,7 +193,7 @@ http:
           dynamic:
             displayName: Starting dima_php2
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_php2
           sablierUrl: http://sablier:10000
@@ -226,7 +204,7 @@ http:
           dynamic:
             displayName: Starting dima_php3
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_php3
           sablierUrl: http://sablier:10000
@@ -237,7 +215,7 @@ http:
           dynamic:
             displayName: Starting dima_php4
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_php4
           sablierUrl: http://sablier:10000
@@ -248,7 +226,7 @@ http:
           dynamic:
             displayName: Starting dima_php5
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_php5
           sablierUrl: http://sablier:10000
@@ -259,7 +237,7 @@ http:
           dynamic:
             displayName: Starting dima_rewrwq
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_rewrwq
           sablierUrl: http://sablier:10000
@@ -270,7 +248,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase1
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase1
           sablierUrl: http://sablier:10000
@@ -281,7 +259,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase10
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase10
           sablierUrl: http://sablier:10000
@@ -292,7 +270,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase11
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase11
           sablierUrl: http://sablier:10000
@@ -303,7 +281,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase18
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase18
           sablierUrl: http://sablier:10000
@@ -314,7 +292,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase2
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase2
           sablierUrl: http://sablier:10000
@@ -325,7 +303,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase21
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase21
           sablierUrl: http://sablier:10000
@@ -336,7 +314,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase4
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase4
           sablierUrl: http://sablier:10000
@@ -347,7 +325,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase5
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase5
           sablierUrl: http://sablier:10000
@@ -358,7 +336,7 @@ http:
           dynamic:
             displayName: Starting dima_testcase8
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: dima_testcase8
           sablierUrl: http://sablier:10000
@@ -369,7 +347,7 @@ http:
           dynamic:
             displayName: Starting test1
             refreshFrequency: 5s
-            showDetails: 'true'
+            showDetails: "true"
             theme: hacker-terminal
           names: test1
           sablierUrl: http://sablier:10000

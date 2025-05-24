@@ -154,7 +154,7 @@ async def update_project(request: Request, project_id: UUID,  auth: AuthStudentD
 
 
 @r.put("/teacher/upload")
-async def update_techer_project(request: Request, project_name: str, auth: AuthorizeDependency, session: SessionDependency, template_id: UUID, queue_token: str):
+async def update_techer_project(request: Request, project_id: UUID,  auth: AuthorizeDependency, session: SessionDependency, queue_token: str):
     filesize = 0
     buffer = BytesIO()
     async for chunk in request.stream():
@@ -162,14 +162,15 @@ async def update_techer_project(request: Request, project_name: str, auth: Autho
         buffer.write(chunk)
 
     buffer.seek(0)
+
+    project = await session.get(Project, project_id, options=(joinedload(Project.project_image),))
+
+    if not project:
+        raise HTTPException(
+            status_code=404, detail='Project not found')
+
     account, _ = auth
 
-    try:
-        project_name = DomainLikeName(project_name)
-    except ValidationError:
-        raise HTTPException(  # noqa: B904
-            status_code=422, detail='Project name is wrong'
-        )
     if filesize == 0:
         raise HTTPException(
             status_code=422, detail='File with no size')
@@ -177,12 +178,13 @@ async def update_techer_project(request: Request, project_name: str, auth: Autho
     queue = uploadfile_queue[queue_token]
     queue_var.set(queue)
     try:
-        project = await project_service.create_project(project_name, account, buffer, session, template_id, filesize)
-    except NotFound as e:
-        raise HTTPException(status_code=404, detail=str(e)) from e
+        await project_service.update_project(project, account, buffer)
+        project.byte_size = filesize
+        session.add(project)
+        await session.commit()
     except BadZipFile as e:
         raise HTTPException(
-            status_code=422, detail='Zipfile errro') from e
+            status_code=422, detail='Zipfile error') from e
     except Exception as e:
         await log.aexception('Exception creaing project', exc_info=e)
         raise

@@ -101,9 +101,6 @@ services:
     deploy:
       endpoint_mode: dnsrr
       mode: global
-      placement:
-        constraints:
-          - node.role==worker
 
 volumes:
   pgdata:

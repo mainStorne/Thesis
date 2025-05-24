@@ -21,6 +21,7 @@ class DockerRepo:
         self._docker_client = Docker()
 
     async def get_nodes(self):
+        self._docker_client.services.list(filters={'label': 'thesis_agent'})
         for node in await self._docker_client.nodes.list():
             node_status = node["Status"]
             yield node['ID'], node_status["Addr"]
