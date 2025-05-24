@@ -87,8 +87,7 @@ services:
     image: 127.0.0.1:5000/thesis.agent
 
     volumes:
-      - /fs:/fs:rw
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/host
 
     cap_add:
       - CAP_SYS_ADMIN
