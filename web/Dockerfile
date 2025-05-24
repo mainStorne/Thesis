@@ -23,14 +23,14 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
 
 FROM base AS runner
 COPY --from=builder ${VENV_PATH} ${VENV_PATH}
-ENV PORT=8080
 
 WORKDIR /web
-COPY src .
-COPY assets .
-COPY storage .
+COPY src src
+COPY assets assets
+COPY storage storage
 COPY alembic.sh .
 COPY alembic.ini .
+COPY main.py .
 
 ENTRYPOINT [ "/web/alembic.sh" ]
-CMD uvicorn src:app --port ${PORT} --host 0.0.0.0
+CMD python -m uvicorn main:app --port 80 --host 0.0.0.0

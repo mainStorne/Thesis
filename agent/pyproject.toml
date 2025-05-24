@@ -20,8 +20,6 @@ classifiers = [
 
 dependencies = [
     "aiodocker>=0.24.0",
-    "alembic>=1.15.2",
-    "asyncpg>=0.30.0",
     "grpc-interceptor>=0.15.4",
     "grpcio>=1.71.0",
     "grpcio-tools>=1.71.0",
