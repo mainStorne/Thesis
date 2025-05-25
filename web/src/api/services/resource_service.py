@@ -1,5 +1,4 @@
 from src.api.repos.docker_repo import docker_repo
-from src.api.repos.mysql_repo import mysql_repo
 from src.grpc.quota_pb2 import CreateSharedResourceRequest, CreateSharedResourceResponse
 from src.grpc.quota_pb2_grpc import ResourcesStub
 from src.grpc_pool import GrpcPool
@@ -34,8 +33,6 @@ class ResourceService:
 
                                              }
                                          })
-
-        await mysql_repo.create_database(session, name)
 
 
 resource_service = ResourceService()

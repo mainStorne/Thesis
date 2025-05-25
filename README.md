@@ -101,6 +101,13 @@ docker stack deploy -c ваш_yaml thesis
 
 ### 🔧 Конфигурация (web|agent/settings.yml)
 
+Создайте в каждом сервисе конфигурационный файл по примеру settings.example.yml
+
+```bash
+
+cp settings.example.yml settings.yml
+```
+
 ```yaml
 quota:
   students_shared_base_dir: /students

@@ -1,3 +1,4 @@
+from enum import StrEnum
 from pathlib import Path
 
 from pydantic import BaseModel, field_validator
@@ -17,7 +18,13 @@ class QuotaSettings(BaseModel):
         return Path("/fs") / str(value)[1:]
 
 
+class AppEnviromnent(StrEnum):
+    local = 'LOCAL'
+    prod = 'PROD'
+
+
 class AppSettings(YamlBaseSettings):
     model_config = SettingsConfigDict(
         yaml_file=Path(__file__).parent / "settings.yml")
     quota: QuotaSettings
+    enviromnent: AppEnviromnent = AppEnviromnent.prod

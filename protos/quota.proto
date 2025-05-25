@@ -7,18 +7,18 @@ service Quota {
     rpc GetUserQuota(GetUserQuotaRequest) returns (GetUserQuotaResponse);
 }
 
-service Resources {
-    // shared resource is mySQL
-    // set in metadata UID, GID resource path or username?
-    rpc CreateSharedResource(CreateSharedResourceRequest) returns (CreateSharedResourceResponse);
-    rpc UploadStudentResource(stream UploadUserAppRequest) returns (UploadUserAppResponse);
-}
-
-
 service System {
     // get system available space and so on
     // rpc GetSystemSpace()
 }
+
+service Resources {
+    // shared resource is mySQL
+    // set in metadata UID, GID resource path
+    rpc CreateSharedResource(CreateSharedResourceRequest) returns (CreateSharedResourceResponse);
+    rpc UploadStudentResource(stream UploadUserAppRequest) returns (UploadUserAppResponse);
+}
+
 
 message CreateSharedResourceRequest {
     string limit = 1;

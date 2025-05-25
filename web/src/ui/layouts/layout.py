@@ -7,8 +7,7 @@ from src.api.repos.users_repo import users_repo
 from src.conf import database, log
 from src.ui.components.field import ThesisText
 from src.ui.components.toast_component import ErrorToast, SuccessToast
-
-from .base import BaseLayout
+from src.ui.layouts.base import BaseLayout
 
 
 class ThesisLayout(BaseLayout):
@@ -23,6 +22,12 @@ class ThesisLayout(BaseLayout):
             self.data.page.go('/images')
         elif index == 3:
             self.data.page.go('/images/create')
+        elif index == 4:
+            self.data.page.go('/teachers/create')
+        elif index == 5:
+            self.data.page.go('/groups/create')
+        elif index == 6:
+            self.data.page.go('/students/create')
 
     def _create_mysql(self, account: Account):
 
@@ -72,6 +77,15 @@ class ThesisLayout(BaseLayout):
         if user.teacher:
             fio = user.teacher.fio
             text = 'Учитель'
+
+        elif user.student:
+            fio = user.student.fio
+            text = 'Студент'
+        else:
+            text = 'Администратор'
+            fio = ''
+
+        if user.teacher or user.is_stuff:
             rail.destinations.append(
                 ft.NavigationRailDestination(
                     icon=ft.Icon(
@@ -86,9 +100,30 @@ class ThesisLayout(BaseLayout):
                     label_content=ThesisText(value="Создать Образ")
                 ),
             )
-        else:
-            fio = user.student.fio
-            text = 'Студент'
+
+            rail.destinations.append(
+                ft.NavigationRailDestination(
+                    icon=ft.Icon(
+                        ft.Icons.ADD_TASK) if self.data.page.route == '/teachers/create' else ft.Icons.ADD_TASK,
+                    label_content=ThesisText(value="Создать преподавателя")
+                ),
+            )
+
+            rail.destinations.append(
+                ft.NavigationRailDestination(
+                    icon=ft.Icon(
+                        ft.Icons.ADD_TASK) if self.data.page.route == '/groups/create' else ft.Icons.ADD_TASK,
+                    label_content=ThesisText(value="Создать группу")
+                ),
+            )
+
+            rail.destinations.append(
+                ft.NavigationRailDestination(
+                    icon=ft.Icon(
+                        ft.Icons.ADD_TASK) if self.data.page.route == '/students/create' else ft.Icons.ADD_TASK,
+                    label_content=ThesisText(value="Создать студента")
+                ),
+            )
 
         return await super().build(ft.Column([
             ft.Container(ft.Row([

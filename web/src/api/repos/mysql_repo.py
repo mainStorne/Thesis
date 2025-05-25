@@ -38,9 +38,9 @@ class MySQLRepo:
 grant  all on {db_name}.* to '{account.login}'@'%';""")
             await session.execute(sql)
 
-    async def create_user_account(self, account: Account):
+    async def create_user_account(self, account: Account, password: str):
         sql = text(
-            f"""create user '{account.login}'@'%' identified by '{account.password}';""")
+            f"""create user '{account.login}'@'%' identified by '{password}';""")
         async with self.session_maker() as session, session.begin():
             await session.execute(sql)
 

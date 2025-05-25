@@ -4,13 +4,17 @@ from pathlib import Path
 
 from structlog import get_logger
 
+from .conf import app_settings
+from .settings import AppEnviromnent
+
 log = get_logger()
 
 
 async def initialize():
-    # Use this hack to work in container
-    os.chroot('/host')
-    os.chdir('/')
+    if app_settings.enviromnent == AppEnviromnent.prod:
+        # Use this hack to work in container
+        os.chroot('/host')
+        os.chdir('/')
 
     path = Path('/fs/shared')
     path.mkdir(exist_ok=True)

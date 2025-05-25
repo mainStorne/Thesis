@@ -1,7 +1,7 @@
 import flet as ft
 import flet_easy as fs
 
-from src.ui.views import admin_panel, images, login, project, user_projects
+from src.ui.views import groups, images, login, project, students, teacher, user_projects
 
 
 class App:
@@ -10,7 +10,7 @@ class App:
         self._app = fs.FletEasy(
             route_init=user_projects.r.route_prefix, route_login='/login')
         self._app.add_pages(
-            [login.r, admin_panel.r, user_projects.r, project.r, images.r])
+            [login.r, students.r, user_projects.r, project.r, images.r, teacher.r, groups.r])
         self._app.login(self.handle_login)
         self._app.config(self.on_config)
 
