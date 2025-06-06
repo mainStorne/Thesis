@@ -352,6 +352,28 @@ http:
           names: dmitry_php1
           sablierUrl: http://sablier:10000
           sessionDuration: 2h
+    dmitry_php2:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_php2
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_php2
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
+    dmitry_php3:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_php3
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_php3
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
     test1:
       plugin:
         sablier:

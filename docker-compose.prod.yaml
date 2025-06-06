@@ -40,7 +40,6 @@ services:
         constraints:
           - node.role==manager
 
-
   web:
     build:
       context: web
@@ -68,7 +67,6 @@ services:
     depends_on:
       - db
 
-
   db:
     image: postgres:latest
     volumes:
@@ -93,10 +91,10 @@ services:
     cap_add:
       - CAP_SYS_ADMIN
     ports:
-    - target: 50051
-      published: 50051
-      protocol: tcp
-      mode: host
+      - target: 50051
+        published: 50051
+        protocol: tcp
+        mode: host
 
     deploy:
       endpoint_mode: dnsrr

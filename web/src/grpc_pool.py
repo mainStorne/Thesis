@@ -2,6 +2,7 @@ import asyncio
 
 from grpc.aio import Channel, insecure_channel
 from src.api.repos.docker_repo import docker_repo
+from src.conf import log
 
 
 class GrpcPool:
@@ -10,15 +11,21 @@ class GrpcPool:
         self._channels = {}
 
     async def _pooling(self):
-        async for node_id, node_ip in docker_repo.get_nodes():
+        async for node_id, node_ip in docker_repo.get_agents():
             if node_ip not in self._channels:
                 channel = await insecure_channel(f"{node_ip}:50051").__aenter__()
                 self._channels[node_id] = channel
 
     async def pooling(self):
+        # pooling until at least on agent is active
         while True:
-            await asyncio.sleep(300)  # one for 5 minutes
+            await log.ainfo("Start polling agents")
             await self._pooling()
+            if self._channels:
+                await log.ainfo("Agents found")
+                break
+            await log.awarning("Agents not found, pooling again")
+            await asyncio.sleep(60)  # wait for 1 minute
 
     def release(self, node_ip: str):
         pass
@@ -29,8 +36,7 @@ class GrpcPool:
 
     async def on_startup(self):
         await docker_repo.init()
-        await self._pooling()
-        asyncio.create_task(self.pooling())  # noqa: RUF006
+        await self.pooling()
 
     async def on_shutdown(self):
         for channel in self.channels.values():

@@ -41,29 +41,26 @@ async def create_student(data: fs.Datasy):
         group_id = e.control.value
 
     options = [
-        ft.DropdownOption(key=group.id,
-                          text=group.name,
-                          style=ft.ButtonStyle(
-                              bgcolor=ft.Colors.WHITE,
-                              padding=0,
-                              shape=ft.ContinuousRectangleBorder()
-                          ),
-                          text_style=ft.TextStyle(
-                              color=ft.Colors.BLACK),
-                          content=ThesisText(value=group.name, text_align=ft.TextAlign.CENTER)) for group in groups]
+        ft.DropdownOption(
+            key=group.id,
+            text=group.name,
+            style=ft.ButtonStyle(bgcolor=ft.Colors.WHITE, padding=0, shape=ft.ContinuousRectangleBorder()),
+            text_style=ft.TextStyle(color=ft.Colors.BLACK),
+            content=ThesisText(value=group.name, text_align=ft.TextAlign.CENTER),
+        )
+        for group in groups
+    ]
 
     async def handle_submit(e):
         if password.current.value != second_password.current.value:
-            password.current.error_text = 'Пароли не совпадают'
+            password.current.error_text = "Пароли не совпадают"
             return
         if not group_id:
             return
         logical_limit = from_string_to_bytes(resource_limit.current.value)
-        password.current.error_text = ''
-        account = Account(login=login.current.value,
-                          hashed_password=password.current.value)
-        account = Account(login=login.current.value,
-                          hashed_password=password.current.value)
+        password.current.error_text = ""
+        account = Account(login=login.current.value, hashed_password=password.current.value)
+        account = Account(login=login.current.value, hashed_password=password.current.value)
         student = Student(
             first_name=first_name.current.value,
             middle_name=middle_name.current.value,
@@ -78,11 +75,10 @@ async def create_student(data: fs.Datasy):
                 session.add(student)
                 await session.commit()
             except Exception as e:
-                await log.awarning('Error in create user', exc_info=e)
-                data.page.open(ErrorToast('Ошибка повторите позже'))
-
+                await log.awarning("Error in create user", exc_info=e)
+                data.page.open(ErrorToast("Ошибка повторите позже"))
             else:
-                data.page.open(SuccessToast('Студент создан!'))
+                data.page.open(SuccessToast("Студент создан!"))
 
     return await ThesisLayout(data).build(
         ThesisPanel(
@@ -92,15 +88,22 @@ async def create_student(data: fs.Datasy):
                 ThesisTextField(label_text="Отчество", ref=last_name),
                 ThesisTextField(label_text="Квота", ref=resource_limit),
                 ThesisDropdown(
-                    ft.Icons.DASHBOARD_CUSTOMIZE, 'Группы',
-                    on_dropdown_change=on_dropdown_change, options=options),
+                    ft.Icons.DASHBOARD_CUSTOMIZE, "Группы", on_dropdown_change=on_dropdown_change, options=options
+                ),
                 ThesisTextField(label_text="Логин", ref=login),
-                ThesisTextField(label_text="Пароль", ref=password,
-                                password=True, can_reveal_password=True,),
-                ThesisTextField(label_text="Повторите пароль",
-                                ref=second_password, password=True, can_reveal_password=True,),
-                ft.Container(ThesisButton(
-                    text="Создать", on_click=handle_submit), alignment=ft.alignment.center_right),
+                ThesisTextField(
+                    label_text="Пароль",
+                    ref=password,
+                    password=True,
+                    can_reveal_password=True,
+                ),
+                ThesisTextField(
+                    label_text="Повторите пароль",
+                    ref=second_password,
+                    password=True,
+                    can_reveal_password=True,
+                ),
+                ft.Container(ThesisButton(text="Создать", on_click=handle_submit), alignment=ft.alignment.center_right),
             ]),
             height=600,
             width=350,

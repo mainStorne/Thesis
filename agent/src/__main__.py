@@ -9,7 +9,7 @@ log = structlog.get_logger()
 
 
 async def main():
-    await log.ainfo('Initialization')
+    await log.ainfo("Initialization")
     await initialize()
     await log.ainfo("Starting server")
     server = Server(50051)

@@ -8,46 +8,36 @@ from src.conf import app_settings, queue_var
 from .base import RepoError
 
 
-class DockerRepoError(RepoError):
-    ...
+class DockerRepoError(RepoError): ...
 
 
 class DockerRepo:
     def __init__(self):
-        self._private_registry = '127.0.0.1:5000'
+        self._private_registry = "127.0.0.1:5000"
         self._docker_client = None
 
     async def init(self):
         self._docker_client = Docker()
 
-    async def get_nodes(self):
+
+    async def get_agents(self):
         for node in await self._docker_client.nodes.list():
             node_status = node["Status"]
-            yield node['ID'], node_status["Addr"]
+            yield node["ID"], node_status["Addr"]
 
     async def push_to_registry(self, name: str):
-        await self._docker_client.images.push(
-            name
-        )
+        await self._docker_client.images.push(name)
 
     async def delete_service(self, name: str):
         await self._delete_image_from_registry(name)
-        await self._docker_client.services.delete(
-            name
-        )
+        await self._docker_client.services.delete(name)
 
     async def _delete_image_from_registry(self, name: str):
         # TODO
         ...
 
     def stream_service_log(self, service_name: str):
-        return self._docker_client.services.logs(
-            service_name,
-            stderr=True,
-            stdout=True,
-            timestamps=True,
-            follow=True
-        )
+        return self._docker_client.services.logs(service_name, stderr=True, stdout=True, timestamps=True, follow=True)
 
     async def create_service(self, name: str, labels: dict[str, str], task_template: dict):
         return await self._docker_client.services.create(
@@ -56,37 +46,37 @@ class DockerRepo:
             name=name,
             registry=self._private_registry,
             endpoint_spec={"Mode": "vip"},
-            networks=[app_settings.swarm.overlay_network_name]
+            networks=[app_settings.swarm.overlay_network_name],
         )
 
     async def is_service_name_exists(self, name: str):
-        services = await self._docker_client.services.list(filters={'name': name})
+        services = await self._docker_client.services.list(filters={"name": name})
         if not services:
             return False
-        return any(service['Spec']['Name'] == name for service in services)
+        return any(service["Spec"]["Name"] == name for service in services)
 
-    async def create_serverless_service(self, name: str, domain: str,  middleware: str, image: str, port: str = '80'):
-        labels = {'sablier.enable': 'true',   'traefik.enable': 'true',
-                  "traefik.docker.lbswarm": "true",
-                  f'traefik.http.routers.{name}.rule': f'Host(`{domain}.{app_settings.domain}`)',
-                  f'traefik.http.routers.{name}.middlewares': middleware,
-                  f'traefik.http.services.{name}.loadbalancer.server.port': port,
-                  f"traefik.http.routers.{name}.entrypoints": "http"}
+    async def create_serverless_service(self, name: str, domain: str, middleware: str, image: str, port: str = "80"):
+        labels = {
+            "sablier.enable": "true",
+            "traefik.enable": "true",
+            "traefik.docker.lbswarm": "true",
+            f"traefik.http.routers.{name}.rule": f"Host(`{domain}.{app_settings.domain}`)",
+            f"traefik.http.routers.{name}.middlewares": middleware,
+            f"traefik.http.services.{name}.loadbalancer.server.port": port,
+            f"traefik.http.routers.{name}.entrypoints": "http",
+        }
 
-        return await self.create_service(
-            name, labels=labels, task_template={'ContainerSpec': {"Image": image}})
+        return await self.create_service(name, labels=labels, task_template={"ContainerSpec": {"Image": image}})
 
-    async def build_project(self, dockerfile: str,  student_project: BytesIO, tag: str):
+    async def build_project(self, dockerfile: str, student_project: BytesIO, tag: str):
         queue = queue_var.get()
-        await queue.put('Создаю docker образ приложения')
+        await queue.put("Создаю docker образ приложения")
         tar = await archive_repo.create_tar(dockerfile, student_project)
-        await queue.put('Docker Образ приложения создан')
+        await queue.put("Docker Образ приложения создан")
         tag = f"{self._private_registry}/{tag}"
-        async for content in self._docker_client.images.build(
-            fileobj=tar, encoding="gzip", tag=tag, stream=True
-        ):
-            message = content.get('stream', None)
-            error = content.get('errorDetail', None)
+        async for content in self._docker_client.images.build(fileobj=tar, encoding="gzip", tag=tag, stream=True):
+            message = content.get("stream", None)
+            error = content.get("errorDetail", None)
             if error:
                 queue.put(message)
                 raise DockerRepoError
