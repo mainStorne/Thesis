@@ -148,7 +148,8 @@ POSTGRES_PASSWORD=secure_password
 login: admin
 password: admin
 
-### Среда разработки
+### Как внести свой вклад?
+
   - Создайте [docker registry](./create-registry.sh)
   ```bash
   sh create-registry.sh
