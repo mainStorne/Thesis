@@ -3,6 +3,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import yaml
 
+from src.conf import app_settings
+
 
 class TraefikRepo:
 
@@ -21,7 +23,7 @@ class TraefikRepo:
             sablier['dynamic'] = {'displayName': f'Starting {service_name}',
                                   'refreshFrequency': '5s', 'showDetails': 'true', 'theme': 'hacker-terminal'}
             sablier['sablierUrl'] = 'http://sablier:10000'
-            sablier['sessionDuration'] = '2h'
+            sablier['sessionDuration'] = app_settings.sublier.session_duration
             config['http']['middlewares'].update({
                 service_name: {'plugin': {'sablier': sablier}}})
             file.seek(0)

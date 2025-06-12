@@ -3,12 +3,12 @@ from io import BytesIO
 from aiodocker import Docker
 
 from src.api.repos.archive_repo import archive_repo
+from src.api.repos.base import RepoError
 from src.conf import app_settings, queue_var
 
-from .base import RepoError
 
-
-class DockerRepoError(RepoError): ...
+class DockerRepoError(RepoError):
+    ...
 
 
 class DockerRepo:
@@ -19,11 +19,16 @@ class DockerRepo:
     async def init(self):
         self._docker_client = Docker()
 
+    async def get_agent_ips(self):
+        tasks = await self._docker_client.tasks.list(filters={"name": "thesis_agent"})
+        if not tasks:
+            raise DockerRepoError
+        for task in tasks:
+            status = (await self._docker_client.nodes.inspect(node_id=task['NodeID']))['Status']
+            if status['State'] != 'ready':
+                continue
 
-    async def get_agents(self):
-        for node in await self._docker_client.nodes.list():
-            node_status = node["Status"]
-            yield node["ID"], node_status["Addr"]
+            yield status['Addr']
 
     async def push_to_registry(self, name: str):
         await self._docker_client.images.push(name)
@@ -68,10 +73,10 @@ class DockerRepo:
 
         return await self.create_service(name, labels=labels, task_template={"ContainerSpec": {"Image": image}})
 
-    async def build_project(self, dockerfile: str, student_project: BytesIO, tag: str):
+    async def build_project(self, student_project: BytesIO, tag: str):
         queue = queue_var.get()
         await queue.put("Создаю docker образ приложения")
-        tar = await archive_repo.create_tar(dockerfile, student_project)
+        tar = await archive_repo.create_tar(student_project)
         await queue.put("Docker Образ приложения создан")
         tag = f"{self._private_registry}/{tag}"
         async for content in self._docker_client.images.build(fileobj=tar, encoding="gzip", tag=tag, stream=True):

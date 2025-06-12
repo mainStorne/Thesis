@@ -49,7 +49,7 @@ class UploadFileComponent:
     def handle_upload(self, e: ft.FilePickerUploadEvent):
         if not e.error:
             return
-        # work around on hand filepicker state
+        # work around on hang filepicker state
         self.data.page.overlay.remove(self.file_picker)
         self.file_picker = ft.FilePicker(
             self.handle_result, self.handle_upload)
@@ -76,7 +76,7 @@ class UploadFileComponent:
 
 class UploadProjectComponent:
 
-    def __init__(self, data, on_error: Callable[[str, str], Any], build_upload_hook: Callable[[], str]):
+    def __init__(self, data, on_error: Callable[[str, str], Any], build_upload_hook: Callable[[], [str, str]]):
         self.data = data
         self.on_error = on_error
         self.build_upload_hook = build_upload_hook
@@ -115,8 +115,6 @@ class UploadProjectComponent:
     def handle_success(self, response: dict):
         self.data.page.open(SuccessToast(
             'Проект успешно загружен! Создаю проект...'))
-        project_url = response['url']
-        self.data.page.launch_url(project_url)
 
     @handle_error_text
     def handle_error(self, status_code: int, detail: str):

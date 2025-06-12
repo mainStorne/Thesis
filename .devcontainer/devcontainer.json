@@ -5,7 +5,7 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     // Use 'postCreateCommand' to run commands after the container is created.
     // "user"
-    "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/agent && uv sync --all-groups && cd /workspace/web && uv sync --all-groups  && sudo sh /workspace/postCreateCommand.sh",
+    "postCreateCommand": "pre-commit install --install-hooks && cd /workspace/web && uv sync --all-groups",
     "dockerComposeFile": [
         "../docker-compose.devcontainer.yaml"
     ],
@@ -69,7 +69,7 @@
         "ghcr.io/guiyomh/features/just:0": {
             "version": "latest"
         },
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
     },
     "workspaceFolder": "/workspace"
 }

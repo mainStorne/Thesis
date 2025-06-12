@@ -65,7 +65,7 @@ async def project(data: fs.Datasy, id: str, user: Account):
     upload_project_component = UploadProjectComponent(data, on_error=on_error,
                                                       build_upload_hook=build_url_hook)
 
-    upload_project_component.build().visible = False  # FIX forn now
+    upload_project_component.build().visible = False  # TODO
 
     confirm_deleting = ft.AlertDialog(
         modal=True,
@@ -98,8 +98,6 @@ async def project(data: fs.Datasy, id: str, user: Account):
                     [ThesisText(value=f'Размер проекта: {project.byte_size}')]),
                 ft.Row(
                     [ft.Container(ThesisText(value=f'URL: {project.project_url}', selectable=True), on_click=lambda e: data.page.launch_url(project.project_url))]),
-                ft.Row(
-                    [ThesisText(value=f'Базовый Образ: {project.project_image.name}')]),
             ],),
             ft.Container(ft.Column([log_panel_component], scroll=True), expand=True,
                          border=ft.border.all(1, ft.Colors.WHITE38),

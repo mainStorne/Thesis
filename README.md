@@ -20,9 +20,7 @@
 
 ## 🏗️ Архитектура системы
 
-```
-
-```
+![Architecture](./docs/architecture.png)
 
 ### Основные компоненты
 
@@ -93,7 +91,7 @@ docker stack deploy -c ваш_yaml thesis
    - Добавьте студентов в группу
    - Администрируйте и просматривайте проекты студентов
 
-2  **Создание образов проекта**:
+2.  **Создание образов проекта**:
     - В веб-интерфейсе нажмине "Создать образ"
     - Выберите Dockerfile для образа
     - Вставьте содержимое Dockerfile образа
@@ -149,3 +147,18 @@ POSTGRES_PASSWORD=secure_password
 
 login: admin
 password: admin
+
+### Среда разработки
+  - Создайте [docker registry](./create-registry.sh)
+  ```bash
+  sh create-registry.sh
+  ```
+  - Создайте overlay network
+  ```bash
+  docker network create --attachable -d overlay thesis_default
+  ```
+  - Запустите [docker stack](./docker-compose.dev.yaml)
+  ```bash
+  docker stack deploy -c docker-compose.dev.yaml thesis
+  ```
+  - Запустите [devcontainer](./.devcontainer/devcontainer.json), который создает среду разработки

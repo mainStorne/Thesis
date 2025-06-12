@@ -1,379 +1,259 @@
 http:
   middlewares:
-    dima2_fdafsdfsa:
+    admin_project1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_fdafsdfsa
+            displayName: Starting admin_project1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_fdafsdfsa
+          names: admin_project1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_fdasfsa:
+          sessionDuration: 50s
+    sessionDuration: 50s
+    student1_code:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_fdasfsa
+            displayName: Starting student1_code
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_fdasfsa
+          names: student1_code
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_first:
+          sessionDuration: 5s
+    student1_makefile:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_first
+            displayName: Starting student1_makefile
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_first
+          names: student1_makefile
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_php:
+          sessionDuration: 5s
+    student1_pr:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_php
+            displayName: Starting student1_pr
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_php
+          names: student1_pr
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_phpfsd:
+          sessionDuration: 5s
+    student1_proj:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_phpfsd
+            displayName: Starting student1_proj
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_phpfsd
+          names: student1_proj
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_phpj:
+          sessionDuration: 5s
+    student1_project2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_phpj
+            displayName: Starting student1_project2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_phpj
+          names: student1_project2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_phpjf:
+          sessionDuration: 5s
+    student1_projer2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_phpjf
+            displayName: Starting student1_projer2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_phpjf
+          names: student1_projer2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima2_test:
+          sessionDuration: 5s
+    student1_term:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima2_test
+            displayName: Starting student1_term
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima2_test
+          names: student1_term
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_da9:
+          sessionDuration: 50s
+    student1_term2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_da9
+            displayName: Starting student1_term2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_da9
+          names: student1_term2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdas:
+          sessionDuration: 50s
+    student1_terminal:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdas
+            displayName: Starting student1_terminal
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdas
+          names: student1_terminal
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsdfsa:
+          sessionDuration: 5s
+    teacher1_fdsfs:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsdfsa
+            displayName: Starting teacher1_fdsfs
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsdfsa
+          names: teacher1_fdsfs
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsf:
+          sessionDuration: 5s
+    teacher1_test1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsf
+            displayName: Starting teacher1_test1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsf
+          names: teacher1_test1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsfa:
+          sessionDuration: 1h
+    teacher1_test2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsfa
+            displayName: Starting teacher1_test2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsfa
+          names: teacher1_test2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsfdafdsa:
+          sessionDuration: 5s
+    teacher1_test4321:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsfdafdsa
+            displayName: Starting teacher1_test4321
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsfdafdsa
+          names: teacher1_test4321
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsfdsa:
+          sessionDuration: 5s
+    teacher1_test90:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsfdsa
+            displayName: Starting teacher1_test90
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsfdsa
+          names: teacher1_test90
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsfdsf:
+          sessionDuration: 5s
+    teacher1_testy:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsfdsf
+            displayName: Starting teacher1_testy
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsfdsf
+          names: teacher1_testy
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_fdsfsa:
+          sessionDuration: 5s
+    teacher_app1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_fdsfsa
+            displayName: Starting teacher_app1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_fdsfsa
+          names: teacher_app1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_php2:
+          sessionDuration: 50s
+    teacher_proj1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_php2
+            displayName: Starting teacher_proj1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_php2
+          names: teacher_proj1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_php3:
+          sessionDuration: 1h
+    teacher_project1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_php3
+            displayName: Starting teacher_project1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_php3
+          names: teacher_project1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_php4:
+          sessionDuration: 1h
+    teacher_projects2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_php4
+            displayName: Starting teacher_projects2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_php4
+          names: teacher_projects2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_php5:
+          sessionDuration: 1h
+    teacher_projfsd:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_php5
+            displayName: Starting teacher_projfsd
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_php5
+          names: teacher_projfsd
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_rewrwq:
+          sessionDuration: 5s
+    teacher_test1:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_rewrwq
+            displayName: Starting teacher_test1
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_rewrwq
+          names: teacher_test1
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase1:
+          sessionDuration: 50s
+    teacher_test2:
       plugin:
         sablier:
           dynamic:
-            displayName: Starting dima_testcase1
+            displayName: Starting teacher_test2
             refreshFrequency: 5s
             showDetails: 'true'
             theme: hacker-terminal
-          names: dima_testcase1
+          names: teacher_test2
           sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase10:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase10
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase10
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase11:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase11
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase11
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase18:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase18
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase18
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase2:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase2
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase2
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase21:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase21
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase21
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase4:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase4
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase4
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase5:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase5
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase5
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dima_testcase8:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dima_testcase8
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dima_testcase8
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dmitry_php1:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dmitry_php1
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dmitry_php1
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dmitry_php2:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dmitry_php2
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dmitry_php2
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
-    dmitry_php3:
-      plugin:
-        sablier:
-          dynamic:
-            displayName: Starting dmitry_php3
-            refreshFrequency: 5s
-            showDetails: 'true'
-            theme: hacker-terminal
-          names: dmitry_php3
-          sablierUrl: http://sablier:10000
-          sessionDuration: 2h
+          sessionDuration: 50s
     test1:
       plugin:
         sablier:

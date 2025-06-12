@@ -9,6 +9,7 @@ services:
       - target: 80
         published: 80
         protocol: tcp
+        
         mode: host
       - target: 8080
         published: 8080
@@ -18,23 +19,32 @@ services:
         published: 3306
         protocol: tcp
         mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
 
   sablier:
     image: sablierapp/sablier:1.9.0
     command:
       - start
       - --provider.name=docker_swarm
-
+  
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
     depends_on:
       - reverse-proxy
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+
 
   db:
     image: postgres:latest
     volumes:
-      - /pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     ports:
       - target: 5432
         published: 5432
@@ -42,3 +52,41 @@ services:
         mode: host
     env_file:
       - .env
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+
+  agent:
+    build:
+      context: agent
+      dockerfile: Dockerfile
+    image: 127.0.0.1:5000/thesis.agent
+
+    volumes:
+      - /:/host
+
+    cap_add:
+      - CAP_SYS_ADMIN
+    ports:
+      - target: 50051
+        published: 50051
+        protocol: tcp
+        mode: host
+
+
+    deploy:
+      endpoint_mode: dnsrr
+      mode: global
+      placement:
+        constraints:
+          - node.role==worker
+
+volumes:
+  pgdata:
+
+networks:
+  default:
+    external: true
+    name: thesis_default
+    

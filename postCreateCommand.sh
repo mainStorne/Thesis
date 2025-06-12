@@ -8,13 +8,13 @@ set -e
 #     mkfs.ext4 -F /tmp/quotafs.img
 # fi
 
-mount -o loop,usrquota,grpquota /quotafs.img /fs
-quotaon -ug /fs
+# mount -o loop,usrquota,grpquota /quotafs.img /fs
+# quotaon -ug /fs
 
-cd /workspace
+# cd /workspace
 
-# run only once
-# sudo sh create-registry.sh
-# sudo docker stack deploy -c docker-compose.dev.yaml thesis
+# # run only once
+# # sudo sh create-registry.sh
+# # sudo docker stack deploy -c docker-compose.dev.yaml thesis
 
-echo "Quota test environment ready!"
+# echo "Quota test environment ready!"

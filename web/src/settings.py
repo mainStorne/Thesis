@@ -18,6 +18,10 @@ class SwarmSettings(BaseModel):
     overlay_network_name: str
 
 
+class SublierSettings(BaseModel):
+    session_duration: str = '1h'
+
+
 class MysqlSettings(BaseModel):
     host: str = 'mysql'
     password: str
@@ -31,6 +35,7 @@ class AppSettings(YamlBaseSettings):
     mysql: MysqlSettings
     domain: str
     database: DatabaseSettings
+    sublier: SublierSettings
 
 
 app_settings = AppSettings()

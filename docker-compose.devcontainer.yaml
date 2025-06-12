@@ -1,19 +1,14 @@
 services:
+
   devcontainer:
     build:
       context: .
       dockerfile: dev.Dockerfile
 
     volumes:
-      - /home/bevzd/test/filesystem:/fs:rw
-      - /home/bevzd/test/quotafs.img:/quotafs.img
-      - ".:/workspace:cached"
       - "./dynamic.yml:/dynamic.yml:rw"
-      - etc_volume:/etc
-      - pgdata:/pgdata
-      # - /sys:/sys:ro
-      # - /var/run/docker.sock:/var/run/docker.sock:rw
-
+      - ".:/workspace:cached"
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - POSTGRES_HOST=db
 
@@ -23,9 +18,13 @@ services:
     cap_add:
       - CAP_SYS_ADMIN
 
+      
+
     privileged: true
     command: [ "sleep", "infinity" ]
 
-volumes:
-  pgdata:
-  etc_volume:
+networks:
+  default:
+    external: true
+    name: thesis_default
+    

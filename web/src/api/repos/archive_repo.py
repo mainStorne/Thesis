@@ -14,14 +14,12 @@ class IArchiveRepo(ABC):
 
 
 class ArchiveRepo(IArchiveRepo):
-    async def create_tar(self, dockerfile, buffer):
+    async def create_tar(self, buffer):
         loop = asyncio.get_event_loop()
         with ThreadPoolExecutor() as pool:
-            return await loop.run_in_executor(pool, self._create_tar, dockerfile, buffer)
+            return await loop.run_in_executor(pool, self._create_tar, buffer)
 
-    def _create_tar(self, dockerfile: str, buffer: BytesIO):
-        dockerfile = BytesIO(dockerfile.encode())
-
+    def _create_tar(self, buffer: BytesIO):
         f = tempfile.NamedTemporaryFile()
         t = tarfile.open(mode="w:gz", fileobj=f)
         with ZipFile(buffer) as zipped:
@@ -41,17 +39,6 @@ class ArchiveRepo(IArchiveRepo):
                 t.addfile(tarinfo, infile)
 
         buffer.close()
-        dfinfo = tarfile.TarInfo("Dockerfile")
-        dfinfo.size = len(dockerfile.getvalue())
-        dockerfile.seek(0)
-        t.addfile(dfinfo, dockerfile)
-
-        dfinfo = tarfile.TarInfo(".dockerignore")
-        dockerignore = BytesIO(b"""Dockerfile
-.dockerignore""")
-        dfinfo.size = len(dockerignore.getvalue())
-        dockerignore.seek(0)
-        t.addfile(dfinfo, dockerignore)
         t.close()
         f.seek(0)
         return f
