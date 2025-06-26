@@ -42,7 +42,7 @@ class ThesisLayout(BaseLayout):
             user = await users_repo.get_user_by_token(session, token)
 
         if not user:
-            self.data.page.go("/login")
+            return self.data.page.go("/login")
 
         selected_index = 0
         if self.data.page.route == '/users/me/projects':

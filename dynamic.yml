@@ -11,6 +11,83 @@ http:
           names: admin_project1
           sablierUrl: http://sablier:10000
           sessionDuration: 50s
+    dmitry_project:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_project
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_project
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
+    dmitry_project1:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_project1
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_project1
+          sablierUrl: http://sablier:10000
+          sessionDuration: 20s
+    dmitry_samsa:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_samsa
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_samsa
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
+    dmitry_whmaa:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_whmaa
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_whmaa
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
+    dmitry_whoami:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_whoami
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_whoami
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
+    dmitry_whoamwithrepo:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_whoamwithrepo
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_whoamwithrepo
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
+    dmitry_whsa:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting dmitry_whsa
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: dmitry_whsa
+          sablierUrl: http://sablier:10000
+          sessionDuration: 1h
     sessionDuration: 50s
     student1_code:
       plugin:

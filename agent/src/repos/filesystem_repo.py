@@ -5,17 +5,16 @@ from structlog import get_logger
 from src.conf import app_settings
 from src.repos.base import RepoError
 
+
 log = get_logger()
 
 
-class FileSystemError(RepoError):
-    ...
+class FileSystemError(RepoError): ...
 
 
 class FilesystemRepo:
-
     def __init__(self):
-        self.shared_base_dir = '/fs/shared'
+        self.shared_base_dir = app_settings.quota.students_shared_base_dir
 
     async def create_shared_resource(self, name: str) -> None:
         await self.create_resource(self.shared_base_dir, name)

@@ -3,7 +3,7 @@ from src.grpc.quota_pb2 import CreateSharedResourceRequest, CreateSharedResource
 from src.grpc.quota_pb2_grpc import ResourcesStub
 from src.grpc_pool import GrpcPool
 
-from .base import ServiceError
+from src.api.services.base import ServiceError
 
 
 class MysqlExists(ServiceError):
@@ -24,7 +24,7 @@ class ResourceService:
 
                                          task_template={
                                              'ContainerSpec': {
-                                                 "Image": 'mysql',
+                                                 "Image": '127.0.0.1:5000/mysql',
                                                  "User": f"{response.uid}:{response.gid}",
                                                  "Env": {'MYSQL_ROOT_PASSWORD': root_password},
                                                  'Mounts': [{'target': '/var/lib/mysql', 'source': response.volume_path, 'type': 'bind'}],

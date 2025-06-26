@@ -35,7 +35,8 @@ class AppSettings(YamlBaseSettings):
     mysql: MysqlSettings
     domain: str
     database: DatabaseSettings
-    sublier: SublierSettings
+
+    sublier: SublierSettings = SublierSettings()
 
 
 app_settings = AppSettings()
