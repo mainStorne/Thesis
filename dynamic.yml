@@ -10,7 +10,7 @@ http:
             theme: hacker-terminal
           names: admin_project1
           sablierUrl: http://sablier:10000
-          sessionDuration: 50s
+          sessionDuration: 2h
     dmitry_project:
       plugin:
         sablier:
@@ -188,6 +188,17 @@ http:
           names: student1_terminal
           sablierUrl: http://sablier:10000
           sessionDuration: 5s
+    student_project1:
+      plugin:
+        sablier:
+          dynamic:
+            displayName: Starting student_project1
+            refreshFrequency: 5s
+            showDetails: 'true'
+            theme: hacker-terminal
+          names: student_project1
+          sablierUrl: http://sablier:10000
+          sessionDuration: 2h
     teacher1_fdsfs:
       plugin:
         sablier:

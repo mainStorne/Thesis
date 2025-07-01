@@ -4,6 +4,7 @@ from aiodocker import Docker
 
 from src.api.repos.archive_repo import archive_repo
 from src.api.repos.base import RepoError
+
 from src.conf import app_settings, queue_var
 
 
@@ -29,6 +30,11 @@ class DockerRepo:
                 continue
 
             yield status['Addr']
+
+    async def get_manager_node_ip(self) -> str:
+        # Get this server ip
+        manager = (await self._docker_client.nodes.list(filters={'role': 'manager'}))[0]
+        return manager['Status']['Addr']
 
     async def push_to_registry(self, name: str):
         await self._docker_client.images.push(name)
@@ -70,8 +76,8 @@ class DockerRepo:
             f"traefik.http.services.{name}.loadbalancer.server.port": port,
             f"traefik.http.routers.{name}.entrypoints": "http",
         }
-
-        return await self.create_service(name, labels=labels, task_template={"ContainerSpec": {"Image": image}})
+        manager_node_ip = await self.get_manager_node_ip()
+        return await self.create_service(name, labels=labels, task_template={"ContainerSpec": {"Image": image, "Hosts": [f'{manager_node_ip} {app_settings.domain}']}})
 
     async def build_project(self, student_project: BytesIO, tag: str):
         queue = queue_var.get()

@@ -33,7 +33,7 @@ async def login(data: fs.Datasy):
                 return
 
             else:
-                login.c.error_text = "4"
+                login.c.error_text = ""
                 await data.login_async(key="token", value=token, next_route="/users/me/projects/create")
 
     return await CenteredLayout(data).build(

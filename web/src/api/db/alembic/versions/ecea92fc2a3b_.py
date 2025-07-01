@@ -14,6 +14,7 @@ from alembic import op
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession
 
 from src.api.db import Account
+from src.settings import app_settings
 from src.api.repos.account_repo import account_repo
 
 # revision identifiers, used by Alembic.
@@ -115,7 +116,7 @@ def upgrade() -> None:
 
     async def create_admin_account(conn: AsyncConnection):
         session = AsyncSession(bind=conn)
-        password = account_repo.hash_password('admin')
+        password = account_repo.hash_password(app_settings.admin.password)
         account = Account(
             login='admin', hashed_password=password, is_stuff=True)
         session.add(account)

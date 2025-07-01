@@ -35,10 +35,11 @@ class MySQLRepo:
         async with self.session_maker() as session, session.begin():
             db_name = f"{account.login}_{postfix}"
             sql = text(f"""create database {db_name};
-grant  all on {db_name}.* to '{account.login}'@'%';""")
+grant all on {db_name}.* to '{account.login}'@'%';""")
             await session.execute(sql)
 
     async def create_user_account(self, account: Account, password: str):
+        """Create user in mysql server"""
         sql = text(
             f"""create user '{account.login}'@'%' identified by '{password}';""")
         async with self.session_maker() as session, session.begin():

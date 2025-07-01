@@ -43,9 +43,11 @@
 
 ### Предварительная требования
 
-1. **Установите Docker**
+1. **Установите git**
+2. **Установите Docker**
+3. **Установите расширение quota для Ubuntu и установите квоты для файловой системы**
 
-### Установка системы
+### Установка хостинга
 
 1. **Клонирование репозитория**:
 
@@ -54,19 +56,78 @@ git clone https://github.com/mainStorne/Thesis.git
 cd Thesis
 ```
 
+### 🔧 Конфигурация
+
+#### Переменные окружения
+
+Данные переменные окружения нужны чтобы создать базу данных postgresql для сервиса web, вам нужно будет продублировать эти настройки в сервисе **web** для корректного подлючения к базе данных
+
+Создайте файл `.env` с необходимыми переменными:
+
+```bash
+# База данных
+POSTGRES_DB=api
+POSTGRES_USER=vFaWi722cKdlA8PeXuyAYoEYzEI
+POSTGRES_PASSWORD=iXaoOngwIegUlYVkpU9wc1It1FU
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+```
+
+#### Сервис Web
+По умолчанию создается аккаунт администратора, изменить пароль вы можете в конфигурации сервиса web.
+При желании вы можете поменять домен всего хостинга, по умолчанию выставлен в thesis.com
+
+```yaml
+database: # Конфигуация базы данных postgresql продублируйте конфигурацию с .env файла
+  db: api
+  user: vFaWi722cKdlA8PeXuyAYoEYzEI
+  password: iXaoOngwIegUlYVkpU9wc1It1FU
+  host: db
+  port: 5432
+
+sublier: # Конфигурация serverless плагина Sublier
+  session_duration: 2h # Через какое время после запуска приложения студента его выключить, удобно будет выставить через 2 часа как время проведения пары
+
+domain: thesis.com # Домен для хостинга
+mysql: # Кофигарация mysql, логин администратора - root
+  password: vFaWi722cKdlA8PeXuyAYoEYzEI # Пароль для администратора mysql
+admin: # Конфигцрация администратора хостинга, логин администратора - admin
+  password: vFaWi722cKdlA8PeXuyAYoEYzEI # Пароль для администратора хостинга
+
+jwt_secret: vFaWi722cKdlA8PeXuyAYoEYzEI # Секретный ключ для хеширования паролей
+```
+
+#### Сервис Agent
+Agent всегда должен быть размещён на машине с включенной квотой.
+
+```yaml
+quota: # настройки квоты
+  students_shared_base_dir: /students # директория для общих ресурсов, в этой директории размещёна база данных mysql
+  students_home_base_dir: /home # домашняя директория студентов (пока что не используется)
+
+```
+
 2. **Выберите конфигурация для деплоя**:
 
 Существует две конфигурации:
 
 - Подходящая для [одного хоста](./docker-compose.prod.one-host.yaml)
 - Подходящая для [нескольких](./docker-compose.prod.yaml)
+В не зависимости какую конфигурацию выберите всегда можно увеличить количество хостов добавляя к swarm - docker worker node
 
 3. **Запустите**
 
+❗ В скрипте [create-registry.sh](./create-registry.sh) скачивается образ 8.0.42-debian для mysql, если вам нужен образ другой версии можете его заменить, главное чтобы api mysql было тем же самым, в частности чтобы работали mysql команды:
+```sql
+create user '<name>'@'%' identified by '<password>';
+create database <db_name>;
+grant all on <db_name>.* to '<name>'@'%';
+```
+
 ```bash
-docker service create --name registry --publish published=5000,target=5000 registry:2
-docker compose -f ваш_yaml build agent web
-docker compose -f ваш_yaml push agent web
+sh create-registry.sh
+docker compose -f ваш_yaml build
+docker compose -f ваш_yaml push
 docker stack deploy -c ваш_yaml thesis
 ```
 
@@ -85,81 +146,8 @@ docker stack deploy -c ваш_yaml thesis
    - Нажмите "Загрузить"
 
 ### Для преподавателей
-
+В разработке
 1. **Просмотр проектов студентов**:
    - Создайте группу для своего курса
    - Добавьте студентов в группу
    - Администрируйте и просматривайте проекты студентов
-
-2.  **Создание образов проекта**:
-    - В веб-интерфейсе нажмине "Создать образ"
-    - Выберите Dockerfile для образа
-    - Вставьте содержимое Dockerfile образа
-    - Создайте образ
-
-### 🔧 Конфигурация (web|agent/settings.yml)
-
-Создайте в каждом сервисе конфигурационный файл по примеру settings.example.yml
-
-```bash
-
-cp settings.example.yml settings.yml
-```
-
-```yaml
-quota:
-  students_shared_base_dir: /students
-  students_home_base_dir: /home
-database:
-  db: serverless_hosting
-  user: admin
-  password: secure_password
-  host: db
-  port: 5432
-
-swarm:
-  overlay_network_name: thesis_default
-
-domain: thesis.com
-mysql:
-  password: vFaWi722cKdlA8PeXuyAYoEYzEI
-  host: 127.0.0.1
-
-jwt_secret: secret
-```
-
-### Переменные окружения
-
-Создайте файл `.env` с необходимыми переменными:
-
-```bash
-# База данных
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=serverless_hosting
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=secure_password
-```
-
-**Внимание** переменные которые вы поставите для базы данные необходимо продублировать в settings.yml для сервиса web
-
-### По умолчанию создается аккаунт администратора
-
-login: admin
-password: admin
-
-### Как внести свой вклад?
-
-  - Создайте [docker registry](./create-registry.sh)
-  ```bash
-  sh create-registry.sh
-  ```
-  - Создайте overlay network
-  ```bash
-  docker network create --attachable -d overlay thesis_default
-  ```
-  - Запустите [docker stack](./docker-compose.dev.yaml)
-  ```bash
-  docker stack deploy -c docker-compose.dev.yaml thesis
-  ```
-  - Запустите [devcontainer](./.devcontainer/devcontainer.json), который создает среду разработки

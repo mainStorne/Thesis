@@ -36,7 +36,11 @@ dependencies = [
 
 
 [dependency-groups]
+debug = [
+    "debugpy>=1.8.14",
+]
 dev = ["pytest>=7.2.0", "pytest-asyncio>=0.26.0"]
+
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -96,4 +100,4 @@ ignore = [
 preview = true
 
 [tool.uv.sources]
-flet-easy = { git = "https://github.com/mainStorne/flet-easy.git" }
+flet-easy = { git = "https://github.com/mainStorne/flet-easy", rev = "dev" }

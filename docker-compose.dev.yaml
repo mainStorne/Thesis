@@ -9,7 +9,6 @@ services:
       - target: 80
         published: 80
         protocol: tcp
-        
         mode: host
       - target: 8080
         published: 8080
@@ -29,30 +28,59 @@ services:
     command:
       - start
       - --provider.name=docker_swarm
-  
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
     depends_on:
       - reverse-proxy
+
     deploy:
       placement:
         constraints:
           - node.role==manager
 
 
+  web:
+    build:
+      context: web
+      dockerfile: dev.Dockerfile
+    image: 127.0.0.1:5000/thesis.web
+    ports:
+      - target: 5678
+        published: 5678
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./dynamic.yml:/dynamic.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    cap_add:
+      - CAP_SYS_ADMIN
+
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.web.entrypoints: "http"
+        traefik.http.services.web.loadbalancer.server.port: 80
+        traefik.http.routers.web.rule: "PathPrefix(`/`)"
+
+      mode: global
+      placement:
+        constraints:
+          - node.role==manager
+    depends_on:
+      - db
+
+
   db:
     image: postgres:latest
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - target: 5432
-        published: 5432
-        protocol: tcp
-        mode: host
     env_file:
       - .env
     deploy:
+      mode: global
       placement:
         constraints:
           - node.role==manager
@@ -62,6 +90,7 @@ services:
       context: agent
       dockerfile: Dockerfile
     image: 127.0.0.1:5000/thesis.agent
+    pid: host
 
     volumes:
       - /:/host
@@ -69,24 +98,14 @@ services:
     cap_add:
       - CAP_SYS_ADMIN
     ports:
-      - target: 50051
-        published: 50051
-        protocol: tcp
-        mode: host
-
+    - target: 50051
+      published: 50051
+      protocol: tcp
+      mode: host
 
     deploy:
       endpoint_mode: dnsrr
       mode: global
-      placement:
-        constraints:
-          - node.role==worker
 
 volumes:
   pgdata:
-
-networks:
-  default:
-    external: true
-    name: thesis_default
-    

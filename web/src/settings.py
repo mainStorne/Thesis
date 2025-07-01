@@ -27,16 +27,20 @@ class MysqlSettings(BaseModel):
     password: str
 
 
+class AdminSettings(BaseModel):
+    password: str
+
+
 class AppSettings(YamlBaseSettings):
     model_config = SettingsConfigDict(
         yaml_file=Path(__file__).parent / 'settings.yml')
     jwt_secret: str = "secret"
-    swarm: SwarmSettings
+    swarm: SwarmSettings = SwarmSettings(overlay_network_name="thesis_default")
     mysql: MysqlSettings
     domain: str
     database: DatabaseSettings
-
     sublier: SublierSettings = SublierSettings()
+    admin: AdminSettings
 
 
 app_settings = AppSettings()
