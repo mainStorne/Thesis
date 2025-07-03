@@ -152,4 +152,6 @@ docker stack deploy -c ваш_yaml thesis
    - Добавьте студентов в группу
    - Администрируйте и просматривайте проекты студентов
 
-[Пример репозитория с приложением php](https://github.com/mainStorne/Thesis-php-example), которое можно загрузить на хостинг.
+### Дополнительные ресурсы
+- [Пример репозитория с приложением php](https://github.com/mainStorne/Thesis-php-example), которое можно загрузить на хостинг.
+- [Ролик с настройкой хостинга](https://disk.yandex.com/i/7OYHcTWAASErVg)
