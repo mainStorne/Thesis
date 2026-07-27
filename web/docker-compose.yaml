@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - ../.env
+    network_mode: host
+
+volumes:
+  pgdata:
