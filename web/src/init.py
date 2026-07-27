@@ -1,11 +1,12 @@
 import asyncio
+
 from structlog import get_logger
 
 from src.api.db.users import Account
-from src.api.services.resource_service import MysqlExists, resource_service
+from src.api.repos.mysql_repo import mysql_repo
+from src.api.services.resource_service import MysqlExists, NoAgentAvailable, resource_service
 from src.conf import app_settings, database
 from src.grpc_pool import grpc_pool
-from src.api.repos.mysql_repo import mysql_repo
 
 log = get_logger()
 
@@ -21,6 +22,8 @@ async def on_init():
             await mysql_repo.create_user_account(Account(login='admin'), app_settings.admin.password)
         except MysqlExists:
             await log.ainfo("Mysql was created")
+        except NoAgentAvailable:
+            await log.awarning("No agent available, skipping mysql bootstrap")
         except Exception as e:
             await log.awarning("Mysql Exception", exc_info=e)
         else:

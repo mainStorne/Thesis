@@ -1,4 +1,4 @@
-import asyncio
+from contextlib import suppress
 
 from grpc.aio import Channel, insecure_channel
 from src.api.repos.docker_repo import DockerRepoError, docker_repo
@@ -16,20 +16,15 @@ class GrpcPool:
             self._channels[agent_ip] = channel
 
     async def pooling(self):
-        # pooling until at least on agent is active
-        while True:
-            await log.ainfo("Start polling agents")
-            try:
-                await self._pooling()
-            except DockerRepoError:
-                await log.awarning("Agents not found, pooling again")
-                await asyncio.sleep(60)
-                continue
-            if self._channels:
-                await log.ainfo("Agents found")
-                break
-            await log.awarning("Agents not found, pooling again")
-            await asyncio.sleep(60)  # wait for 1 minute
+        # single discovery pass; if no agent is found, _channels stays empty
+        # and callers are expected to handle that (see ResourceService.create_mysql)
+        await log.ainfo("Looking for agents")
+        with suppress(DockerRepoError):
+            await self._pooling()
+        if self._channels:
+            await log.ainfo("Agents found")
+        else:
+            await log.awarning("No agents found, continuing without one")
 
     def release(self, agent_ip: str):
         pass
