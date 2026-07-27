@@ -1,12 +1,15 @@
 from src.api.repos.docker_repo import docker_repo
+from src.api.services.base import ServiceError
 from src.grpc.quota_pb2 import CreateSharedResourceRequest, CreateSharedResourceResponse
 from src.grpc.quota_pb2_grpc import ResourcesStub
 from src.grpc_pool import GrpcPool
 
-from src.api.services.base import ServiceError
-
 
 class MysqlExists(ServiceError):
+    ...
+
+
+class NoAgentAvailable(ServiceError):
     ...
 
 
@@ -15,6 +18,8 @@ class ResourceService:
     async def create_mysql(self, session, name: str, root_password: str, limit: str, grpc_pool: GrpcPool):
         if await docker_repo.is_service_name_exists(name):
             raise MysqlExists
+        if not grpc_pool.channels:
+            raise NoAgentAvailable
         node_id, channel = next(iter(grpc_pool.channels.items()))
         stub = ResourcesStub(channel)
         response: CreateSharedResourceResponse = await stub.CreateSharedResource(CreateSharedResourceRequest(limit=limit, name=name))
