@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -19,11 +18,11 @@ class SwarmSettings(BaseModel):
 
 
 class SublierSettings(BaseModel):
-    session_duration: str = '1h'
+    session_duration: str = "1h"
 
 
 class MysqlSettings(BaseModel):
-    host: str = 'mysql'
+    host: str = "mysql"
     password: str
 
 
@@ -32,8 +31,7 @@ class AdminSettings(BaseModel):
 
 
 class AppSettings(YamlBaseSettings):
-    model_config = SettingsConfigDict(
-        yaml_file=Path(__file__).parent / 'settings.yml')
+    model_config = SettingsConfigDict(yaml_file=Path(__file__).parent.parent / "settings.yml")
     jwt_secret: str = "secret"
     swarm: SwarmSettings = SwarmSettings(overlay_network_name="thesis_default")
     mysql: MysqlSettings
